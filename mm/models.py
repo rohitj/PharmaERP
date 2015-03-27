@@ -4,7 +4,7 @@ from django import forms
 import datetime
 
 #------------------------------------------------------------------------------------------------
-
+#This is the code added through branch ravi_describe_model
 # Test model
 class Book(models.Model):
     name = models.CharField(max_length=200)
