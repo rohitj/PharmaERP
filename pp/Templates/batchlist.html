@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html>
+<title> Batch List  </title>
+
+<head>
+
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}mycss.css" >
+<script type="text/javascript" src="{{ STATIC_URL }}jquery-1.6.1.min.js"> </script>
+</head>
+
+<body>
+<div id="main">
+<h2> {{ heading1 }}  </h2>
+
+
+<table >
+<tr>
+
+<td> <b>Area </b> </td> <td> <b>Product </b></td> <td>  <b>Priority </b></td>  <td> <b> Stage </b></td>
+
+</tr>
+{% for b in obatch  %}
+<tr>
+<td> {{ b.pgroup_id.rmarea_id  }} </td>
+<td> {{ b.pgroup_id }}  </td>
+<td> {{b.pririty }} </td>
+<td> {{ b.stage }}  </td>
+<td> <a href= "pp/newfs/change/"> Change </a>  </td>
+</tr>
+{% endfor %}
+</table>
+<hr>
+<form>
+<input type="Submit" name="action" value="Reserve">
+<button id="New" >New </button>
+<button id="Delete">Delete  </button>
+<button id="Cons">Conslidated            </button>
+<br>
+<input id="num" type="number" value=10 >
+</form>
+
+</div>
+
+<div id="Status">
+     <div class="myimage" ><image src="{{ STATIC_URL }}image1.jpg"/></div>
+     <div class="myimage" ><image src="{{ STATIC_URL }}image2.jpg"/></div>
+ <p> OK </p>
+<h3> This is new div   </p>  </h3>
+
+</div>
+           <script>
+                       $(document).ready(function(){
+                                  $("#New").click(function(){
+                                         alert("OK"); });
+                                                                    });
+            </script>
+
+
+           <script>
+                      $(document).ready(function(){
+                               $(".myimage").click(function(){
+                                      var num= $("#num").val();
+                                      var test="This is new line "+num+ "%<br>";
+                                      $("#Status").append(test);
+                                      alert("You clicked the image");
+                                                 $(".myimage").each(function(){
+                                                       $(this).unbind('click');
+                                                                               })
+                                                                                  });
+                                                                                     });
+            </script>
+
+
+          <script>
+           $(document).ready(function(){
+               $(function(){
+                    $("#Delete").bind('click', function(){
+                       $.ajax(
+                       url : "xhr_test/",
+                       success: function(rdata){
+                       alert(rdata);  });
+                  return false; });
+                                                           });
+                                                                        });
+         </script>
+
+</body>
+
+</html>
