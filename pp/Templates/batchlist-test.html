@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html>
+<title> Batch List  </title>
+
+<head>
+
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}mycss.css" >
+<script type="text/javascript" src="{{ STATIC_URL }}jquery-1.6.1.min.js"> </script>
+
+
+
+
+</head>
+
+<body>
+<div id="main">
+<h2> {{ heading1 }}  </h2>
+
+
+<table >
+<tr>
+
+<td> <b>Area </b> </td> <td> <b>Product </b></td> <td>  <b>Priority </b></td>  <td> <b> Stage </b></td>
+
+</tr>
+{% for b in obatch  %}
+<tr>
+<td> {{ b.pgroup_id.rmarea_id  }} </td>
+<td> {{ b.pgroup_id }}  </td>
+<td> {{b.pririty }} </td>
+<td> {{ b.stage }}  </td>
+<td> <a href= "pp/newfs/change/"> Change </a>  </td>
+</tr>
+{% endfor %}
+</table>
+<hr>
+<form id="check" action=".">
+<input type="Submit" name="action" value="Reserve">
+<button id="New" >New </button>
+<button id="Delete">Delete  </button>
+<button id="Cons"  onclick="test()" >Conslidated         </button>
+<br>
+<input id="num" name="num" type="number" value=10 >
+</form>
+
+</div>
+
+<div id="Status">
+ <p> OK </p>
+<h3> Click here to add one more line dynamically   </p>  </h3>
+
+</div>
+
+          <script>
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie != '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+
+}
+          </script>
+
+           <script>
+                       $(document).ready(function(){
+                                  $("#New").click(function(){
+                                  var csrftoken=getCookie('csrftoken');
+                                         alert(csrftoken); });
+                                                                    });
+            </script>
+
+
+           <script>
+                      $(document).ready(function(){
+                               $("#Status").click(function(){
+                                      var num= $("#num").val();
+                                      var test="This is new line "+num+ "%<br>";
+                                      $("#Status").append(test);
+                                      alert("You clicked the box");
+                                                 $(".myimage").each(function(){
+                                                       $(this).unbind('click');
+                                                                               })
+                                                                                  });
+
+                                                                                     });
+            </script>
+
+
+          <script>
+           $(document).ready(function(){
+
+                  $("#Delete").click(function(){
+                  var $form=$("#check");
+                  var csrftoken=getCookie('csrftoken');
+
+                  $.ajax({ type:"POST", url:  "ajax/",
+                    data:  $form.serialize(),
+                    contentType:"application/json",
+                    success:
+                    function(rdata){
+                    $("#Status").append("New record: " +rdata);
+                       alert(rdata);  },
+                     error: function(rdata){ alert("Error");} } );
+
+                       return false;
+                                                    });
+                                                    });
+
+         </script>
+
+
+</body>
+
+</html>

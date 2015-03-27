@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<title> Test  </title>
+<head>
+<p> {{ MEDIA_URL }}  </p>
+    <style>
+            #change_me{
+            position: absolute;
+            top: 300px;
+            left: 600px;
+            font: 24px arial;}
+
+            #move_up #move_down #color #disappear {
+            padding: 5px; }
+    </style>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"> </script>
+</head>
+<body>
+<div id="main">
+<h2> {{ heading1 }}  </h2>
+<h3> Area: {{ fs.obatch.pgroup_id.rmarea_id }} Product: {{ fs.obatch.pgroup_id }} Size: {{ fs.bsize }}  Dept: {{ fs.dept }} </h3>
+<hr />
+
+<table >
+<tr>
+
+<td> <b>Raw Material </b> </td> <td> <b> Fraction </b></td> <td>  <b>Overage </b></td>  <td> <b> Required Qty </b></td>
+
+</tr>
+{% for r in fs.req  %}
+<tr>
+<td> {{ r.rcode_id  }} </td>
+<td> {{ r.fraction }}  </td>
+<td> {{ r.overage }} </td>
+<td> {{ r.treq }}
+<td> <a href= "pp/newfs/change/"> Change </a>  </td>
+</tr>
+{% endfor %}
+</table>
+
+<form>
+<input type="Submit" name="action" value="Reserve">
+<button id="change_me1" > action </button>
+<button id="disappear">Disappear/Re-Appear</button>
+</form>
+
+</div>   // #main
+
+ <div id="change_me">Make_Me_Do </div>
+
+           <script>
+                       $(document).ready(function(){
+                                  $.get("ajax/", function(data){
+                                         alert(data); });
+                                                                    });
+            </script>
+</body>
+
+</html>

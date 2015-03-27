@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<title> New Batch  </title>
+
+<head>
+
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}mycss.css" >
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.6.1.min.js"> </script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/myjs.js"> </script>
+<script type="text/javascript" src="/admin/jsi18n/"> </script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/core.js"> </script>
+
+</head>
+
+<body>
+
+<h2> <span id="myHead" >New Batch  </span> </h2>
+<hr>
+
+<div id="Batch" >
+
+    <form   id="frmBatch"  action="." method="post"  class="someClass">{% csrf_token %}
+        {{ rform }}
+        {{ form.pgroup_id.label_tag }}  {{ form.pgroup_id }}  <br>
+         {{ form.fsno.label_tag }}  {{ form.fsno }}   <br>
+         {{ form.date_processing.label_tag }} {{ form.date_processing }}
+         {{ form.expiery.label_tag }} {{ form.expiery }}
+         {{ form.priority.label_tag }} {{ form.priority }}
+        <hr>
+    </form>
+
+</div>
+
+<form>
+    <input type="submit" id="btnSave" value="Save" />
+    <button id="Dist" >Distribution </button>
+    <button id="Dist1" >Extra </button>
+</form>
+<hr>
+
+<div id="Check">
+</div>
+
+<script>
+    $(document).ready(function(){
+        $(".btclass").live("change",function(e){
+            $($(this).parent().next().children()[0]).val($(this).val()*4);
+          var sum=0;
+          $(".btclass").each(function(i,obj) {
+            var qt=parseFloat($(obj).val());
+               if(!isNaN(qt) ) {
+                sum+=qt;}
+           $("#totalqty").val(sum);
+            })
+            })
+    })
+</script>
+
+<script>
+    $(document).ready(function(){
+       $("#Dist").click(function(){
+       var  $this=$(this)
+       $("#id_pgroup_id").attr("disabled","disabled");
+       var pcd=$("#id_pgroup_id").val();
+       $("#Check").html(
+             "<h3>"+ $this.attr("ID") +"</h3>"
+             );
+       $("#myHead").css("color","red");
+           $('.someClass').prop('disabled', true);
+           $("#frmBatch").attr("readonly", "readonly");
+       $.ajax({ type: "POST",
+                url: "distt/",
+                data: {'pcode':$("#id_pgroup_id").val()},
+                success: function(data){
+                $("#Batch").append("<b> Packing details </b>");
+                $("#Batch").append(data);
+                datatype='html';
+                $this.attr("disabled","disabled")
+                }
+                })  ;
+
+
+         return false;
+                         });
+                            });
+
+</script>
+
+
+<script>
+    $(document).ready(function(){
+       $("#id_rmarea_id").change(function(){
+       $("#Check").append($("#id_rmarea_id").val());
+       $("#id_rmarea_id").attr("disabled","disabled");
+       $.ajax({ type: "POST",
+                url: "prod/",
+                data: {'area':$("#id_rmarea_id").val()},
+                success: function(data){
+
+                $("#id_pgroup_id").get(0).options.length=0;
+
+                $.each(data,function(i,opt){
+                n=$("#id_pgroup_id").get(0).options.length;
+
+                 $("#id_pgroup_id").get(0).options[n]=new Option(opt.fields.groupname,opt.pk);
+
+                  });
+{#                alert(data);#}
+                }
+                })  ;
+
+
+         return false;
+                         });
+                            });
+
+</script>
+
+
+<script>
+    $(document).ready(function(){
+        $("#btnSave").click(function(){
+            $("#myHead").html("Saving...");
+
+            $.ajax({ type: "POST",
+                url: "save/",
+{#                data: {action:"Save",batch:$('#frmBatch').serialize(),'distt':$("#frmDistt").serialize()},  #}
+                data: {action:"Save",batch:$('#frmBatch').serialize()},
+                success: function(data){
+                alert(data);
+                }
+            })  ;
+
+            return false;
+        });
+    });
+
+</script>
+
+
+<script>
+$(document).ready(function(){
+$("tbody td").live("change",function(e){
+        var myCol = $(this).index();
+        var $tr1 = $(this).closest('tr');
+        var myRow = $tr1.index();
+
+    if (myCol<=1) {
+        var $td = $(this).closest("td").next().next();
+        var currentCellText = $td.index();
+        var $child=$td.children()[0];
+        $(child).val("200");
+        var frmid=$td.children()[0].id;
+        $("#"+frmid).val("100");
+    }
+
+
+alert('row:'+myRow+' column:'+myCol+$(this).val());
+
+return false;
+});
+});
+</script>
+
+</body>
+</html>

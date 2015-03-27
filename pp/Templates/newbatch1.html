@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html>
+<title> New Batch  </title>
+
+<head>
+
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}mycss.css" >
+<script type="text/javascript" src="{{ STATIC_URL }}jquery-1.6.1.min.js"> </script>
+
+
+</head>
+
+<body>
+
+<h2> {{ heading1 }}  </h2>
+
+<hr>
+
+<form    action="." method="post">{% csrf_token %}
+{{ rform.as_p }}
+{{ form.as_p }}
+<hr>
+<input type="submit" id="New1" value="Save" />
+<button id="New" >Distribution </button>
+</form>
+<hr>
+
+
+<div id="Check">
+<p> Add data here </p>
+</div>
+
+
+
+<script>
+    $(document).ready(function(){
+       $("#New").click(function(){
+       $("#Check").html(
+             "<button id='mySecondDiv'>Test</button>"
+             );
+       $.ajax({ type: "POST",
+                url: "prod/",
+                data: {'area':$("#id_rmarea_id").val()},
+                success: function(data){
+
+                $("#id_pgroup_id").get(0).options.length=0;
+
+                $.each(data,function(i,opt){
+                 n=$("#id_pgroup_id").get(0).options.length;
+
+                 $("#id_pgroup_id").get(0).options[n]=new Option(opt.fields.groupname,opt.pk);
+                 });
+                alert(data);
+                }
+                })  ;
+
+
+         return false;
+                         });
+                            });
+
+</script>
+
+
+<script>
+    $(document).ready(function(){
+       $("#id_rmarea_id").change(function(){
+       $("#Check").append($("#id_rmarea_id").val());
+
+       $.ajax({ type: "POST",
+                url: "prod/",
+                data: {'area':$("#id_rmarea_id").val()},
+                success: function(data){
+
+                $("#id_pgroup_id").get(0).options.length=0;
+
+                $.each(data,function(i,opt){
+                n=$("#id_pgroup_id").get(0).options.length;
+
+                 $("#id_pgroup_id").get(0).options[n]=new Option(opt.fields.groupname,opt.pk);
+                 });
+                alert(data);
+                }
+                })  ;
+
+
+         return false;
+                         });
+                            });
+
+</script>
+
+
+
+
+</body>
+</html>
