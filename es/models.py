@@ -7,7 +7,6 @@ from django import forms
 #  ES Module:  Enterprise Structure model with Client | Business partners | Parties place orders | Sale Areas | Sale Tax | Employee
 #-------------------------------------------------------------------------------------------------------------------------
 
-#from fi.models import Code
 
 # Employee model 
 class Emp(models.Model):
@@ -122,26 +121,6 @@ class PageRep(models.Model):
         return '%s %s ' % (self.rep_id , self.fdate)
 
 #Tax classification based on Sales Area/ Purchase type/ SAles type/ and form type
-class Salecode(models.Model):
-    fgarea_id=models.ForeignKey(Fgarea)
-    PURTYPE_CHOICES=(('LP','Local Purchase'),('CP','Central Purchase'))
-    purtype=models.CharField(max_length=2,default='LP',choices=PURTYPE_CHOICES)
-    SALETYPE_CHOICES=(('LST','Local Sale'),('CST','Central Sale'))
-    saletype=models.CharField(max_length=5,default='LP',choices=SALETYPE_CHOICES)
-    A_FORM_CHOICES=(('C','C Form'),('ST-35','ST-35'),('F','F') )
-    a_form=models.CharField(max_length=10,default='C',choices=A_FORM_CHOICES)
-    salecode=models.ForeignKey('fi.Code')
-    taxrate=models.DecimalField(max_digits=10, decimal_places=2)
-    narration=models.CharField(max_length=100)
-    fdate=models.DateField('effective from')
-    tdate=models.DateField()
-
-    def __str__(self):
-        return '%s %s ' % (self.saletype , self.a_form)
-
-    class Meta:
-        unique_together = (('fgarea_id','purtype','saletype','a_form', ),)
-
 class Saletax(models.Model):
     fgarea_id=models.ForeignKey(Fgarea)
     PURTYPE_CHOICES=(('LP','Local Purchase'),('CP','Central Purchase'))

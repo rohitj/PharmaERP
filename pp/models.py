@@ -5,11 +5,11 @@ from django import forms
 import datetime
 from django.db.models import Avg, Max, Min, Count,Sum
 from django.shortcuts import render_to_response
+
 #------------------------------------------------------------------------------------------------
 #	PP Module:	Production planning model contains Sales Order | Formulation |  Production Batch
 #-------------------------------------------------------------------------------------------------
 
-#from mm.models import Pgroup
 # Raw material recipe master
 class Rmrecipemaster(models.Model):
     pgroup_id=models.ForeignKey('mm.Pgroup')
@@ -19,7 +19,6 @@ class Rmrecipemaster(models.Model):
     def __str__(self):
         return '%s %s %s %s' % (self.pgroup_id,self.fdate,'to',self.tdate)
 
-#from mm.models import Packing
 # Packing material recipe master
 class Pmrecipemaster(models.Model):
     packing_id=models.ForeignKey('mm.Packing')
@@ -29,13 +28,12 @@ class Pmrecipemaster(models.Model):
     def __str__(self):
         return '%s %s %s %s' % (self.packing_id,self.fdate,'to',self.tdate)
 
-#from mm.models import Rcode
 # Raw material used as : sometimes rcodes names are used differently in recipe [say sodium chloride called as (Salt as binder)
 class Rcodeas(models.Model):
     rcode=models.ForeignKey('mm.Rcode')
     name=models.CharField(max_length=40)
 
-#from mm.models import Rcode,Unit
+
 # Version of RM recipe
 class Rmrecipe(models.Model):
     rmrecipemaster_id=models.ForeignKey(Rmrecipemaster)
@@ -54,7 +52,7 @@ class Rmrecipe(models.Model):
     def cal(self,qty):
         return round(self.fraction*qty*(100+self.overage)/100,self.roff)
 
-#from mm.models import Rcode
+
 # Version of PM recipe
 class Pmrecipe(models.Model):
     pmrecipemaster_id=models.ForeignKey(Pmrecipemaster)
@@ -67,7 +65,7 @@ class Pmrecipe(models.Model):
     def required(self,qty):
         return qty*self.fraction*(100+self.overage)/100
 
-#from es.models import Rmarea
+
 # Sale is done through some known transporters- so a master.
 class Ptransport(models.Model):
       name=models.CharField(max_length=40)
@@ -76,7 +74,7 @@ class Ptransport(models.Model):
       def __str__(self):
           return self.name
 
-#from es.models import Rmarea
+
 # List of key persons whose sale order we are processing. They can place orders online.
 class Contacts(models.Model):                  # loan licensing
     name=models.CharField(max_length=40)
@@ -88,10 +86,9 @@ class Contacts(models.Model):                  # loan licensing
     def __str__(self):
         return '%s %s ' % (self.name, self.rmarea_id)
 
-#from es.models import Rmarea
-from django.contrib.auth.models import User
 
 # Sale orders master
+from django.contrib.auth.models import User
 class Pordermaster(models.Model):
     rmarea_id=models.ForeignKey('es.Rmarea')
     orno=models.CharField(max_length=40,null=True,verbose_name="Customer Order No")
@@ -107,8 +104,6 @@ class Pordermaster(models.Model):
     class Meta:
         verbose_name="Production Order"
         unique_together=("rmarea_id","date")
-
-#from mm.models import Packing
 
 # Sale orders details
 class Porder(models.Model):
@@ -134,8 +129,6 @@ class Porder(models.Model):
     def __str__(self):
         return '%s %s %s' % (self.pordermaster_id,self.packing_id, self.test())
 
-#from es.models import Rmarea
-
 # May be used later
 class Mplanmaster(models.Model):
     rmarea_id=models.ForeignKey('es.Rmarea')
@@ -154,7 +147,7 @@ class Phase(models.Model):
     srno=models.IntegerField()
     phase=models.CharField(max_length=20)
 
-#from mm.models import Pgroup
+
 # Batch planned 
 class Mbatch(models.Model):
     fsno=  models.CharField(max_length=10)
@@ -229,7 +222,7 @@ class MbatchPo(models.Model):
     def __str__(self):
         return '%s %s' % (self.porder_id,self.quantity)
 
-#from mm.models import Packing
+
 # Packing details of each batch planned
 class Distt(models.Model):
     mbatch_id=models.ForeignKey(Mbatch)
@@ -269,11 +262,11 @@ class Fstype(models.Model):
         class Meta:
             Isnew=True
 
-# Each batch can have several output set- one such set may have X qty of product produced.
+# TV stands for transfer vouche- Each batch can have several output set- one such set may have X qty of product produced.
 class Tvmaster(models.Model):
     date=models.DateField(null=True)
 
-# Details of ne TVmaster.
+# Details of one TVmaster.
 class Tv(models.Model):
     tvmaster_id=models.ForeignKey(Tvmaster)
     distt_id=models.ForeignKey(Distt)

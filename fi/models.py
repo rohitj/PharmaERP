@@ -28,8 +28,7 @@ class Code(models.Model):
     class Meta:
          verbose_name = "Account Head"
 
-#from sd.models import Vno
-#from mm.models import Pur
+
 # All financial transactions in ledger
 class Led(models.Model):
     doctype=models.CharField(max_length=2)

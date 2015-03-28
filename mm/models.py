@@ -11,7 +11,6 @@ import datetime
 class Book(models.Model):
     name = models.CharField(max_length=200)
 
-#from fi.models import Code
 # Supplier master
 class Sup(models.Model):
     code=models.OneToOneField('fi.Code',primary_key=True)
@@ -23,8 +22,6 @@ class Sup(models.Model):
     def __str__(self):
         return '%s' % (self.code)
 
-#from es.models import Rmarea
-#from pp.models import Rmrecipe
 # Product group master [ Each item indicate one product line]
 class Pgroup(models.Model):
     groupname = models.CharField(max_length=60)
@@ -94,7 +91,6 @@ class Pbatch(models.Model):
     expiery=models.DateField('expiery date')
 
 # Finished goods store items.
-#from sd.models import Vno
 class Psr(models.Model):
     vno_id=models.IntegerField()  #ForeignKey(Vno,blank=True,null=True)
     pack_id=models.ForeignKey(Packing)
@@ -105,7 +101,7 @@ class Psr(models.Model):
 
     def __str__(self):
         return ' '
-#------------------------------------------------------------------------------------------------
+
 # Units -  to be extended with additional fields 
 class Unit(models.Model):
     name=models.CharField(max_length=10,unique=True)
@@ -140,7 +136,6 @@ class Rgroup(models.Model):
     def __str__(self):
         return self.groupname
 
-#from es.models import Rmarea
 # List of actual usable materials baed on which formulation recipe if created.
 class Rcode(models.Model):
     rgroup_id=models.ForeignKey(Rgroup)
@@ -225,8 +220,6 @@ class Rbatch(models.Model):
 #quality data shall flow from existing system
 
 #  Material inventory transaction register- all incoming and outgoing
-#from pp.models import Fstype
-#from es.models import Rmarea
 class Rsr(models.Model):
     fstype_id=models.ForeignKey('pp.Fstype',null=True,blank=True)
     tab_tp=models.CharField(max_length=1,blank=True,null=True)
