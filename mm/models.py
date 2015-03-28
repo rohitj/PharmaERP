@@ -4,14 +4,15 @@ from django import forms
 import datetime
 
 #------------------------------------------------------------------------------------------------
-#This is the code added through branch ravi_describe_model
-#This is second commit on same branch
+#  MM Module:  Product & raw material | Stock register for both | Unit Mgt | Supplier & purchases
+#------------------------------------------------------------------------------------------------
 
 # Test model
 class Book(models.Model):
     name = models.CharField(max_length=200)
 
 #from fi.models import Code
+# Supplier master
 class Sup(models.Model):
     code=models.OneToOneField('fi.Code',primary_key=True)
     stno=models.CharField(max_length=30,null=True,blank=True,verbose_name="Sale Tax No")
@@ -24,6 +25,7 @@ class Sup(models.Model):
 
 #from es.models import Rmarea
 #from pp.models import Rmrecipe
+# Product group master [ Each item indicate one product line]
 class Pgroup(models.Model):
     groupname = models.CharField(max_length=60)
     bs_cat=models.CharField(max_length=10,null=True,blank=True)
@@ -48,7 +50,8 @@ class Pgroup(models.Model):
 
     def __str__(self):
         return "%s" % (self.groupname)
-
+		
+# Indicates one product packing within a product line [ will have individual formulation]
 class Packing(models.Model):
     pgroup_id=models.ForeignKey(Pgroup)
     packname=models.CharField(max_length=30)
@@ -76,18 +79,21 @@ class Packing(models.Model):
     def fst(self):
         return 10
 
+# List of supplier of finished product- Pharmasynth sometimes buy finshed product and market those product. Not to be used.
 class Psup(models.Model):         #product suppllier
     code=models.OneToOneField('fi.Code',primary_key=True)
 
+# Not to be used.
 class Recno(models.Model):
     psup_id=models.ForeignKey(Psup)
     date=models.DateField('receipt date')
-
+# Not to be used.
 class Pbatch(models.Model):
     recno_id=models.ForeignKey(Recno)
     batchname=models.CharField(max_length=20)
     expiery=models.DateField('expiery date')
 
+# Finished goods store items.
 #from sd.models import Vno
 class Psr(models.Model):
     vno_id=models.IntegerField()  #ForeignKey(Vno,blank=True,null=True)
@@ -100,13 +106,14 @@ class Psr(models.Model):
     def __str__(self):
         return ' '
 #------------------------------------------------------------------------------------------------
+# Units -  to be extended with additional fields 
 class Unit(models.Model):
     name=models.CharField(max_length=10,unique=True)
 
     def __str__(self):
         return self.name
 
-
+# Dimension master say VOLUME MASS DENSITY etc.
 class Quantity(models.Model):
     name=models.CharField(max_length=10)
     unit=models.ForeignKey(Unit)
@@ -114,7 +121,7 @@ class Quantity(models.Model):
     def __str__(self):
         return self.name
 
-
+# Unit conversion interface from one unit to another
 class Uc(models.Model):
     quantity_id=models.ForeignKey(Quantity)
     u1=models.ForeignKey(Unit,related_name='fromunit')
@@ -124,7 +131,7 @@ class Uc(models.Model):
     def __str__(self):
         return "%s %s " % (self.u1 + "-->"+  self.u2)
 
-
+#  Material group-  class of input materials
 class Rgroup(models.Model):
     groupname = models.CharField(max_length=60)
     DEPT_CHOICES=(('RM','Raw Material'),('PM','Packing Material'))
@@ -134,6 +141,7 @@ class Rgroup(models.Model):
         return self.groupname
 
 #from es.models import Rmarea
+# List of actual usable materials baed on which formulation recipe if created.
 class Rcode(models.Model):
     rgroup_id=models.ForeignKey(Rgroup)
     rname=models.CharField(max_length=60)
@@ -149,12 +157,13 @@ class Rcode(models.Model):
         rid=self.id
         return self.rbatch_set.raw("select a.id,a.rcode_id_id,a.quantity,sum(b.quantity) as used,(a.quantity-sum(b.quantity)) as bal from mm_rbatch a,mm_rsr b where a.rcode_id_id=%s and a.id=b.rbatch_id_id group by a.id having a.quantity>used",[rid])
 
-
+# Movement type whch reflect trnsaction type { say purchase| consumption| loss | transfer etc.)
 class Mtype(models.Model):
 #    USAGE_CHOICES=(("O","Opening Balance"),("P","Purchase"),("M","Miscellaneous"),("R","Reserved"))
     mtype=models.PositiveIntegerField(primary_key=True)
     description=models.CharField(max_length=20,null=True)
 
+# Single purchase bill header details 
 class Pur(models.Model):
     sup_id=models.ForeignKey(Sup)
     REF_CHOICES=(("JV","Challan"),("PI","Purchase Bill"))
@@ -182,6 +191,7 @@ class Pur(models.Model):
 
     ino=models.IntegerField(unique_for_year="date")  #internal purchase no.
 
+# Purchase item batch details [including quality status say purity etc]
 class Rbatch(models.Model):
     pur_id=models.IntegerField(null=True,blank=True)
     rcode_id=models.ForeignKey(Rcode)
@@ -214,6 +224,7 @@ class Rbatch(models.Model):
 
 #quality data shall flow from existing system
 
+#  Material inventory transaction register- all incoming and outgoing
 #from pp.models import Fstype
 #from es.models import Rmarea
 class Rsr(models.Model):
