@@ -60,7 +60,7 @@ class Pmrecipe(models.Model):
     claim= models.CharField(max_length=20)
     fraction=models.DecimalField(max_digits=10, decimal_places=4)
     overage=models.DecimalField(max_digits=10, decimal_places=2)
-    roff=models.IntegerField(default=4)
+    roff=models.IntegerField(default=4)				# round off decimals
 
     def required(self,qty):
         return qty*self.fraction*(100+self.overage)/100
@@ -136,7 +136,7 @@ class Mplanmaster(models.Model):
     tdate=models.DateField()
 
 # May be used later
-	class Operation(models.Model):
+class Operation(models.Model):
     pgroup_id=models.ForeignKey('mm.Pgroup')
     srno=models.IntegerField()
     operation=models.CharField(max_length=20)
@@ -150,7 +150,7 @@ class Phase(models.Model):
 
 # Batch planned 
 class Mbatch(models.Model):
-    fsno=  models.CharField(max_length=10)
+    fsno=  models.CharField(max_length=10)			# systematic way of batch numbers while batchno is the text of FSNO
     batchno=models.CharField(max_length=10)
     pgroup_id=models.ForeignKey('mm.Pgroup')
     rmrecipemaster_id=models.ForeignKey(Rmrecipemaster,blank=True,null=True)
@@ -217,7 +217,7 @@ class MbatchPo(models.Model):
     mbatch_id=models.ForeignKey(Mbatch)
     porder_id=models.ForeignKey(Porder)
     quantity=models.DecimalField(max_digits=10, decimal_places=2,blank=True)
-    issquare=models.BooleanField()
+    issquare=models.BooleanField()				# means close the sale order ith this qty.
 
     def __str__(self):
         return '%s %s' % (self.porder_id,self.quantity)
@@ -229,7 +229,7 @@ class Distt(models.Model):
     packing_id=models.ForeignKey('mm.Packing')
     quantity=models.DecimalField(max_digits=10, decimal_places=2,blank=True)
     produced=models.DecimalField(max_digits=10, decimal_places=2,blank=True)
-    unticost=models.DecimalField(max_digits=10, decimal_places=2,blank=True)
+    unticost=models.DecimalField(max_digits=10, decimal_places=2,blank=True)		# cost of unit production shall be updated later.
 
     def __str__(self):
         return '%s %s %s ' % (self.mbatch_id,self.packing_id,self.quantity)
@@ -242,7 +242,7 @@ class Fstype(models.Model):
     date=models.DateField(null=True)
     DEPT_CHOICES=(('RM','Raw Material'),('PM','Packing Material'))
     dept=models.CharField(max_length=2,choices=DEPT_CHOICES)
-    islocked=models.BooleanField()
+    islocked=models.BooleanField()							# locked the quantity for this batch.
     status=models.IntegerField()
 
 

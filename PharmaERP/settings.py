@@ -58,11 +58,11 @@ WSGI_APPLICATION = 'PharmaERP.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE':root',
-		'PASSWORD': 'rkj72449',
-    } 'django.db.backends.mysql',
-        'NAME': 'pf2',
-		'USER': '
+        'ENGINE':'django.db.backends.mysql',
+	'options':{  'database': 'pf2',
+		'USER': 'root ',
+		'PASSWORD': 'rkj72449' }
+}
 }
 
 # Internationalization
