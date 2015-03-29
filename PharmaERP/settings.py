@@ -36,6 +36,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'pp',
+	'es',
+	'fi',
+	'mm',
+	'sd',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -59,9 +64,9 @@ WSGI_APPLICATION = 'PharmaERP.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE':'django.db.backends.mysql',
-	'options':{  'database': 'pf2',
-		'USER': 'root ',
-		'PASSWORD': 'rkj72449' }
+	    'NAME': 'pf2',
+		'USER': 'root',
+		'PASSWORD': 'rkj72449' 
 }
 }
 

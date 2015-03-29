@@ -1,5 +1,5 @@
 from django.contrib import admin
-from pf2.fi.models import Code,Pay,Led
+from fi.models import Code,Pay,Led
 import datetime
 
 class CodeAdmin(admin.ModelAdmin):

@@ -69,7 +69,7 @@ class Rmarea(models.Model):
         return "%s"% (self.name)
 
     def lastorder(self):
-        from pf2.pp.models import Pordermaster
+        from PharmaERP.pp.models import Pordermaster
         return "Text"  #Pordermaster.objects.all().aggregate(Max("date"))
 
 # Sales areas (Depo / warehouse etc)
@@ -121,7 +121,7 @@ class PageRep(models.Model):
         return '%s %s ' % (self.rep_id , self.fdate)
 
 #Tax classification based on Sales Area/ Purchase type/ SAles type/ and form type
-class Saletax(models.Model):
+class Salecode(models.Model):
     fgarea_id=models.ForeignKey(Fgarea)
     PURTYPE_CHOICES=(('LP','Local Purchase'),('CP','Central Purchase'))
     purtype=models.CharField(max_length=2,default='LP',choices=PURTYPE_CHOICES)
