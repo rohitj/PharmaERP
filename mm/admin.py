@@ -1,12 +1,12 @@
 from django.contrib import admin
-from pf2.mm.models import Sup,Pgroup,Packing,Psr,Rgroup,Rcode,Uc,Unit,Quantity
+from mm.models import Sup,Pgroup,Packing,Psr,Rgroup,Rcode,Uc,Unit,Quantity
 
 import datetime
 
 class SupAdmin(admin.ModelAdmin):
     model=Sup
 
-from pf2.sd.models import Plist
+from sd.models import Plist
 class PlistInline(admin.TabularInline):
     model=Plist
     extra=2

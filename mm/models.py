@@ -2,23 +2,10 @@ from django.db import models
 from django.forms import ModelForm
 from django import forms
 import datetime
+from django.core.urlresolvers import resolve
 
 #------------------------------------------------------------------------------------------------
 
-# Test model
-class Book(models.Model):
-    name = models.CharField(max_length=200)
-
-#from fi.models import Code
-class Sup(models.Model):
-    code=models.OneToOneField('fi.Code',primary_key=True)
-    stno=models.CharField(max_length=30,null=True,blank=True,verbose_name="Sale Tax No")
-    eccno=models.CharField(max_length=20,null=True,blank=True)
-    identity=models.CharField(max_length=10,null=True,blank=True)
-    active=models.BooleanField(default=True)
-
-    def __str__(self):
-        return '%s' % (self.code)
 
 #from es.models import Rmarea
 #from pp.models import Rmrecipe
@@ -29,12 +16,12 @@ class Pgroup(models.Model):
     isactive=models.BooleanField(default=True)
 
     def required(self,b,dep):
-         from pf2.pp.models import Rmrecipemaster,Rmrecipe
+         from pp.models import Rmrecipemaster,Rmrecipe
          qty=b.batchsize()
 
          if dep=="RM":
              q=Rmrecipemaster.objects.filter(pgroup_id=self, fdate__lt= datetime.date.today(), tdate__gt=datetime.date.today())
-             f= q[0].rmrecipe_set.all().extra(select={"treq":0L,"alloted":0L})
+             f= q[0].rmrecipe_set.all().extra(select={"treq":0,"alloted":0})
              for item in f:
                 item.treq=item.cal(qty)
                 item.nreq=0.00
@@ -46,6 +33,57 @@ class Pgroup(models.Model):
 
     def __str__(self):
         return "%s" % (self.groupname)
+
+
+    def as_table(self):
+        return "<td>%s</td><td>%s</td><td>%s</td><td>%s</td>"%(self.groupname, self.bs_cat, self.rmarea_id, self.isactive)
+
+    def as_table_header(self):
+        return "<th>Name</th><th>BS Cat</th><th>RMArea</th><th>isActive</th>"
+
+    @models.permalink
+    def create_url(request):
+        return ("create_pgroup", (), {})
+        
+    @models.permalink
+    def edit_url(self, request=None):
+        return ("edit_pgroup", (), {'id':self.id})
+
+    @models.permalink
+    def view_url(self, request=None):
+        return ("view_pgroup", (), {'id':self.id})
+
+    def display_name(self, request):
+        return "Product Group"
+
+    def template(request):
+        return "general_result.html"
+
+    def view_template(self, request):
+        return "mm/viewpgroup.html"
+        
+    def link_template(request):
+        return "mm/linkpgroup.html"
+
+    def edit_template(request):
+        return "mm/editpgroup.html"
+        
+    def is_create_allowed(request):
+        return True
+
+    def is_edit_allowed(self, request):
+        return True
+
+    def dependent(self, request, classname_nested=None):
+        return self.packing_set.all()
+
+
+class PgroupForm(ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        super(PgroupForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model=Pgroup
 
 class Packing(models.Model):
     pgroup_id=models.ForeignKey(Pgroup)
@@ -74,6 +112,69 @@ class Packing(models.Model):
     def fst(self):
         return 10
 
+    def as_table(self):
+        return "<td>%s</td><td>%s</td><td>%s</td><td>%s</td>"%(self.packname, self.unitppack, self.qty_per_ca, self.box)
+
+    def as_table_header(self):
+        return "<th>Name</th><th>Unit Pack</th><th>QTY Per CA</th><th>Box</th>"
+
+    @models.permalink
+    def add_dependent_url(self, request=None):
+        return ("add_dependent_pgroup", (), {'id':self.id})
+
+    @models.permalink
+    def create_url(request):
+        return ("create_pgroup", (), {})
+        
+    @models.permalink
+    def edit_url(self, request=None):
+        return ("edit_pgroup", (), {'id':self.id})
+
+    @models.permalink
+    def view_url(self, request=None):
+        return ("view_packing", (), {'id':self.id})
+
+    def display_name(self, request):
+        return "Packings"
+
+    def template(request):
+        return "general_result.html"
+
+    def view_template(self, request):
+        return "mm/viewpacking.html"
+        
+    def link_template(request):
+        return "mm/linkpacking.html"
+
+    def edit_template(self, request):
+        return "mm/editpacking.html"
+        
+    def is_create_allowed(request):
+        return True
+
+    def is_edit_allowed(self, request):
+        return True
+
+
+class PackingForm(ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        super(PackingForm, self).__init__(*args, **kwargs)
+
+    def save(self, request, commit=True):
+        instance = super(PackingForm, self).save(commit=False)
+        func, args, kwargs = resolve(request.path)
+        instance.pgroup_id = Pgroup.objects.get(pk=kwargs["dependent_id"])
+        if commit:
+            instance.save()
+        return instance
+#        blah.pgroup_id = re
+
+    class Meta:
+        model=Packing
+        exclude=("pgroup_id",)
+
+
+
 class Psup(models.Model):         #product suppllier
     code=models.OneToOneField('fi.Code',primary_key=True)
 
@@ -88,12 +189,13 @@ class Pbatch(models.Model):
 
 #from sd.models import Vno
 class Psr(models.Model):
-    vno_id=models.IntegerField()  #ForeignKey(Vno,blank=True,null=True)
+    vno_id=models.ForeignKey("sd.Vno",blank=True,null=True)
     pack_id=models.ForeignKey(Packing)
     pbatch_id=models.ForeignKey(Pbatch)
     fullcases=models.IntegerField(null=True,blank=True)
     looseqty=models.IntegerField(null=True,blank=True)
     quantity=models.DecimalField(max_digits=10, decimal_places=0)
+#    price
 
     def __str__(self):
         return ' '
@@ -128,8 +230,58 @@ class Rgroup(models.Model):
     DEPT_CHOICES=(('RM','Raw Material'),('PM','Packing Material'))
     dept=models.CharField(max_length=2,choices=DEPT_CHOICES)
     family=models.CharField(max_length=6,blank=True,null=True)
+
     def __str__(self):
         return self.groupname
+
+    def as_table(self):
+        return "<td>%s</td><td>%s</td><td>%s</td>"%(self.groupname, self.dept, self.family)
+
+    def as_table_header(self):
+        return "<th>Name</th><th>Dept</th><th>Family</th>"
+
+    @models.permalink
+    def create_url(request):
+        return ("create_rgroup", (), {})
+        
+    @models.permalink
+    def edit_url(self, request=None):
+        return ("edit_rgroup", (), {'id':self.id})
+
+    @models.permalink
+    def view_url(self, request=None):
+        return ("view_rgroup", (), {'id':self.id})
+
+    def display_name(self, request):
+        return "Raw Material Group"
+
+    def template(request):
+        return "general_result.html"
+
+    def view_template(self, request):
+        return "mm/viewrgroup.html"
+        
+    def link_template(request):
+        return "mm/linkrgroup.html"
+
+    def edit_template(request):
+        return "mm/editrgroup.html"
+        
+    def is_create_allowed(request):
+        return True
+
+    def is_edit_allowed(self, request):
+        return True
+
+    def dependent(self, request, classname_nested=None):
+        return self.rcode_set.all()
+
+class RgroupForm(ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        super(RgroupForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model=Rgroup
 
 #from es.models import Rmarea
 class Rcode(models.Model):
@@ -146,6 +298,63 @@ class Rcode(models.Model):
     def av(self):
         rid=self.id
         return self.rbatch_set.raw("select a.id,a.rcode_id_id,a.quantity,sum(b.quantity) as used,(a.quantity-sum(b.quantity)) as bal from mm_rbatch a,mm_rsr b where a.rcode_id_id=%s and a.id=b.rbatch_id_id group by a.id having a.quantity>used",[rid])
+
+    def as_table(self):
+        return "<td>%s</td>"%(self.name)
+
+    def as_table_header(self):
+        return "<th>Name</th>"
+
+    @models.permalink
+    def create_url(request):
+        return ("create_rcode", (), {})
+        
+    @models.permalink
+    def edit_url(self, request=None):
+        return ("edit_rcode", (), {'id':self.id})
+
+    @models.permalink
+    def view_url(self, request=None):
+        return ("view_rcode", (), {'id':self.id})
+
+    def display_name(self, request):
+        if self.rgroup_id:
+            return "Packing for " + self.rgroup_id
+        return "Packing"
+
+    def template(request):
+        return "general_result.html"
+
+    def view_template(self, request):
+        return "mm/viewrcode.html"
+        
+    def link_template(request):
+        return "mm/linkrcode.html"
+
+    def edit_template(request):
+        return "mm/editrgroup.html"
+        
+    def is_create_allowed(request):
+        return True
+
+    def is_edit_allowed(self, request):
+        return True
+
+class RcodeForm(ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        super(RcodeForm, self).__init__(*args, **kwargs)
+
+    def save(self, request, commit=True):
+        instance = super(RcodeForm, self).save(commit=False)
+        func, args, kwargs = resolve(request.path)
+        instance.rgroup_id = Rgroup.objects.get(pk=kwargs["dependent_id"])
+        if commit:
+            instance.save()
+        return instance
+
+    class Meta:
+        model=Rcode
+        exclude=("rgroup_id",)
 
 
 class Mtype(models.Model):

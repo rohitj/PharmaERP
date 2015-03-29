@@ -1,0 +1,358 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" type="text/css" href="/site_media/style.css" />
+	<link rel="stylesheet" type="text/css" href="/site_media/blue_sort_table/style.css"/>
+	<script type="text/javascript" src="/site_media/jquery/js/jquery-1.3.2.min.js"></script>
+	<script type="text/javascript" src="/site_media/jquery/jquery.tablesorter.min.js"></script>
+	<script type="text/javascript" src="/site_media/jquery/jquery.searchable.js"></script>
+	<script type="text/javascript" src="/site_media/jquery/js/jquery-ui-1.7.2.custom.min.js"></script>
+	<script type="text/javascript" src="/site_media/jquery/asmselect/jquery.asmselect.js"></script>
+	<script type="text/javascript" src="/site_media/jquery/jquery.fcbkcomplete.js"></script>
+	<script type="text/javascript" src="/site_media/jquery/jquery.confirm-1.3.js"></script>
+	<link rel="stylesheet" type="text/css" href="/site_media/jquery/asmselect/jquery.asmselect.css" />
+	<link rel="stylesheet" type="text/css" href="/site_media/dropdown/style.css" />
+	<link rel="stylesheet" type="text/css" href="/site_media/fcbkcomplete/style.css" />
+    {% block meta %}
+    {% endblock %}
+	<link type="text/css" href="/site_media/jquery/css/ui-lightness/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+	<script type="text/javascript">
+		function editObject(myurl) {
+			$.ajax({
+				url: myurl,
+				success: function(data){
+					$('#editObjectContent').html(data);
+					$('#editObject').children("form").attr('action', myurl);
+					$('#editObject').show();
+				}
+			});
+		}
+		function deleteObject(myurl) {
+			$.ajax({
+				url: myurl,
+				success: function(data){
+					$('#deleteObjectContent').html(data);
+					$('#deleteObject').show();
+				}
+			});
+		}
+		function addDependentObject(myurl) {
+			$.ajax({
+				url: myurl,
+				success: function(data){
+					$('#addDependentObjectContent').html(data);
+					$('#addDependentObject').children("form").attr('action', myurl);
+					$('#addDependentObject').show();
+				}
+			});
+		}
+		function viewObject(myurl) {
+			$.ajax({
+				url: myurl,
+				success: function(data){
+					$('#viewObjectContent').html(data);
+					$('#viewObject').show();
+				}
+			});
+		}
+		function submiteditform(myurl, divid) {
+			$.post(myurl, $('#' + divid).children('form').serialize(), 
+				function(data) {
+					$('#' + divid + 'Content').html(data);
+					if(data.substring(0, 5) != "error") {
+						$('#editObject').hide();
+						//Update the row here
+						//$('#result')
+					}
+					else {
+					}
+				}
+			);
+		}
+		function submitadddependentform(myurl, divid) {
+			$.post(myurl, $('#' + divid).children('form').serialize(), 
+				function(data) {
+					$('#' + divid + 'Content').html(data);
+					if(data.substring(0, 5) != "error") {
+						$('#'+divid).hide();
+						//Update the row here
+						//$('#result')
+					}
+					else {
+					}
+				}
+			);
+		}
+
+		
+		function cancelpopupform() {
+			$('#popupform').hide();
+		}
+
+
+    function cloneMore(selector, type) {
+      var newElement = $(selector).clone(true);
+      var total = $('#id_' + type + '-TOTAL_FORMS').val();
+      newElement.find(':input').each(function() {
+         var name = $(this).attr('name').replace('-' + (total-1) + '-','-' + total + '-');
+         var id = 'id_' + name;
+         $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+      });
+      newElement.find('label').each(function() {
+        var newFor = $(this).attr('for').replace('-' + (total-1) + '-','-' + total + '-');
+        $(this).attr('for', newFor);
+      });
+      total++;
+      $('#id_' + type + '-TOTAL_FORMS').val(total);
+      $(selector).after(newElement);
+    }
+
+		function stopRKey(evt) {
+			var evt = (evt) ? evt : ((event) ? event : null);
+			var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+			if ((evt.keyCode == 13) && (node.type=="text"))  {return false;}
+		}
+		document.onkeypress = stopRKey;
+
+
+		function askdelete() {
+			document.getElementById('delete').innerHTML = "Are you sure you want to delete this record. All records related to this record will be deleted. <a href='javascript:yesdelete();'>yes</a> / <a href='javascript:nodelete();'>no</a>";
+		}
+		function yesdelete() {
+			location.href = "{{ deleteinstance.get_delete_url }}";
+		}
+		function nodelete() {
+			document.getElementById('delete').innerHTML = "";
+		}
+	</script>
+	<title>{{ office }} || Daksh : The Manager || {{ title }}</title>
+</head>
+<body>
+<div id='firsttime' class="mybody">
+
+<div id="popupform"></div>
+<!-- header start -->
+	{% block header %}
+	{% autoescape off %}
+	<div id="header" class="contain">
+		<table width='100%'>
+			<tr>
+				<td align="left">
+				<a href="/"><strong>DAKSH</strong></a>
+				</td>
+				<td>Time : {% now "r" %}</td>
+				<td align="right">
+				{%if onlineinfo %}
+					Welcome {{ onlineinfo }} (<a href='/{{ onlineinfo }}/profile/'>profile</a>)| <a href="/logout/">logout</a>
+				{% else %}
+					<a href="/login/">login</a>
+				{% endif %}
+				</td>
+			</tr>
+		</table>
+	</div>
+    <ul id="nav">
+        <li><a href="#">Planning</a>
+            <ul>
+	            <li><a href='/porder/'>Sale Order</a></li>
+    	        <li><a href='#'>Production Planning</a>
+                    <ul>
+                        <li><a href='#'>From Sale Order</a></li>
+                        <li><a href='#'>Independent</a></li>
+                        <li><a href='#'>Batach History</a></li>
+                       <li><a href='#'>Batches in Planning</a></li>
+                    </ul>
+                </li>
+                <li><a href='#'>MRP</a></li>
+                <li><a href='#'>Production History</a></li>
+                <li><a href='#'>Inventory</a></li>
+	        </ul>
+        </li>
+		<li><a href='#'>Process</a>
+		    <ul>
+		    	<li><a href='#'>Flow Sheets</a>
+			        <ul>
+		    	    	<li><a href='#'>New Original Flow Sheet</a></li>
+			    	    <li><a href='#'>New Subsidary Flow Sheet</a></li>
+		    		    <li><a href='#'>New Return Flow Sheet</a></li>
+		
+		        		<li><a href='#'>Retrieve Flow Sheet</a></li>
+			        	<li><a href='#'>Show All</a></li>
+		    		</ul>
+		    </li>
+			<li><a href='#'>Batch View</a>
+			    <ul>
+				    <li><a href='#'>Batches in Plan</a></li>
+		    		<li><a href='#'>Batches in Production</a></li>
+			    	<li><a href='#'>All</a></li>
+				    <li><a href='#'>Batches</a></li>
+		
+		    		<li><a href='#'>Distribution</a></li>
+			    	<li><a href='#'>Batch Yield</a></li>
+				</ul>
+			</li>
+			<li><a href='#'>Close Batch</a></li>
+			<li><a href='#'>Open Batch</a></li>
+			<li><a href='#'>Transfer Voucher</a></li>
+		    </ul>
+		</li>    
+
+		<li><a href='#'>Materials</a>
+			<ul>
+				<li><a href='#'>Purchase Orders</a></li>
+				<li><a href='#'>Purchase</a>
+					<ul>
+						<li><a href='#'>Single Item</a>
+							<ul>
+								<li><a href='#'>New</a></li>
+								<li><a href='#'>Modify</a></li>
+								<li><a href='#'>Delete</a></li>
+							</ul>
+						</li>
+						<li><a href='#'>New Challan</a></li>
+						<li><a href='#'>Purchase Bill</a>
+							<ul>
+								<li><a href='#'>New</a></li>
+								<li><a href='#'>Modify</a></li>
+								<li><a href='#'>Delete</a></li>
+							</ul>
+						</li>
+						<li><a href='#'>Detail RMPM Purchase</a></li>
+						<li><a href='#'>Cons Purchase</a></li>
+					</ul>
+				</li>
+				<li><a href='#'>Goods In Voucher</a>
+					<ul>
+						<li><a href='#'>New</a></li>
+						<li><a href='#'>Modify</a></li>
+						<li><a href='#'>DElete</a></li>
+					</ul>
+				</li>
+				<li><a href='#'>Testing Data</a></li>
+				<li><a href='#'>Miscellaneuos Entry	</a>
+					<ul>
+						<li><a href='#'>New</a></li>
+						<li><a href='#'>Modify</a></li>
+						<li><a href='#'>Delete</a></li>
+						<li><a href='#'>Report</a></li>
+					</ul>
+				</li>
+				<li><a href='#'>Stock</a>
+					<ul>
+						<li><a href='#'>Date Wise</a></li>
+						<li><a href='#'>Batch Wise</a></li>
+						<li><a href='#'>Current Stock</a></li>
+						<li><a href='#'>Stock as on date</a></li>
+						<li><a href='#'>Total Available</a></li>
+						<li><a href='#'>Combined Stock</a></li>
+					</ul>
+				</li>
+			</ul>
+		</li>	
+		
+		<li><a href='#'>Masters</a>
+			<ul>
+				<li><a href='/rmarea/'>RM Area</a></li>
+				<li><a href='/fgarea/'>FG Area</a></li>
+				<li><a href='/employee/'>Employee</a></li>
+				<li><a href='/pgroup/'>Product Groups</a></li>
+				<li><a href='/rawmaterial/'>Raw Materials</a></li>
+				<li><a href='/pageno/'>Page No</a></li>
+				<li><a href='/contacts/'>Contacts</a></li>
+				<li><a href='/ptransport/'>Transport Service</a></li>
+				<li><a href='/customercategory/'>Customer Category</a></li>
+				<li><a href='/customer/'>Customers</a></li>
+				<li><a href='/supplier/'>Suppliers</a></li>
+				<li><a href='/unit/'>Unit</a></li>
+			</ul>
+		</li>
+
+		<li><a href='#'>Adminsitration</a>
+			<ul>
+				<li><a href='#'>Find Mismatch</a></li>
+				<li><a href='#'>Update</a>
+					<ul>
+						<li><a href='#'>Completion Status</a></li>
+						<li><a href='#'>Material Balance</a></li>
+						<li><a href='#'>Batch STage</a></li>
+						<li><a href='#'>Batch Costing</a></li>
+						<li><a href='#'>Stock C/F</a></li>
+						<li><a href='#'>Special reports</a>
+							<ul>
+								<li><a href='#'>BS Cons Report</a></li>
+								<li><a href='#'>BS Pro Detail;s</a></li>
+								<li><a href='#'>Work in progress</a></li>
+								<li><a href='#'>Modvat NAlaysis</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
+
+	{% endautoescape %}
+	{% endblock %}{# header #}
+<!-- header ends -->
+
+
+<!-- messages start -->
+{#  messages #}
+	{% if messages %}
+	{% autoescape off%}
+	<ul class="notice">
+	{% for message in messages %}
+		<li>{{ message }}</li>
+	{% endfor %}
+	</ul>
+	{% endautoescape %}
+	{% endif %}
+<!-- messages end -->
+
+
+<!-- main content starts -->
+	{% block content %}
+	{% endblock %}
+<!-- main content ends -->
+
+
+<!-- footer starts -->
+	{% block bottom %}
+	<div id="bottom" class="contain">
+		<center>
+		&copy 2008-2010 <a href="http://rohitj.net">rohitj</a> | 
+		<a href="/aboutus/">About Us</a> | 
+		<a href="/contact/">Contact</a> | 
+		<a href="/help/">Help</a> | 
+		</center>
+	</div>
+	{% endblock %} {# bottom #}
+<!-- footer ends -->
+
+
+</div> {# main div #}
+
+<script type="text/javascript">
+	$(document).ready(function() { 
+		$("#sort_table").tablesorter({ 
+			widgets: ['zebra'] 
+		}); 
+		//$("#sort_table").searchable(); 
+		$("select[multiple]").fcbkcomplete();
+	});
+	$(function() {
+		$("#id_dob").datepicker({showOn: 'button', buttonImage: '/site_media/images/calendar.gif', buttonImageOnly: true, changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd"});
+		$("#id_admission_date").datepicker({showOn: 'button', buttonImage: '/site_media/images/calendar.gif', buttonImageOnly: true, changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd"});
+		$("#id_date").datepicker({showOn: 'button', buttonImage: '/site_media/images/calendar.gif', buttonImageOnly: true, changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd"});
+		$("#id_due_date").datepicker({showOn: 'button', buttonImage: '/site_media/images/calendar.gif', buttonImageOnly: true, changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd"});
+		$("#id_since_date").datepicker({showOn: 'button', buttonImage: '/site_media/images/calendar.gif', buttonImageOnly: true, changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd"});
+		$("#id_exit_date").datepicker({showOn: 'button', buttonImage: '/site_media/images/calendar.gif', buttonImageOnly: true, changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd"});
+		$("#id_date_assign").datepicker({showOn: 'button', buttonImage: '/site_media/images/calendar.gif', buttonImageOnly: true, changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd"});
+		$("#id_completion_date").datepicker({showOn: 'button', buttonImage: '/site_media/images/calendar.gif', buttonImageOnly: true, changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd"});
+	});
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+{% load tags %}
+<button onclick="javascript:editObject('{{ result.edit_url }}');">{% convert_to_img "edit" %}</button>
+<button onclick="javascript:viewObject('{{ result.view_url }}');">{% convert_to_img "view" %}</button>
+<button onclick="window.location.href='/packing/pgroup/{{ result.id }}/'">{% convert_to_img "add_dependent" "Packings" %}</button>

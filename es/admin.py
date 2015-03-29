@@ -1,6 +1,6 @@
 from django.contrib import admin
-from pf2.es.models import Clt,Emp,Fgarea,Station,Pageno,Rep,PageRep,Salecode,Saletax,Rmarea,UserProfile
-from pf2.es.models import Bptype,Bpartner
+from es.models import *
+from es.models import Bptype,Bpartner
 
 import datetime
 
@@ -13,11 +13,8 @@ class BpartnerAdmin(admin.ModelAdmin):
 class CltAdmin(admin.ModelAdmin):
     model=Clt
 
-class EmpAdmin(admin.ModelAdmin):
-    model=Emp
-
-class UserProfileAdmin(admin.ModelAdmin):
-    model=UserProfile
+class EmployeeAdmin(admin.ModelAdmin):
+    model=Employee
 
 class FgareaAdmin(admin.ModelAdmin):
     model=Fgarea
@@ -51,8 +48,7 @@ admin.site.register(Salecode,SalecodeAdmin)
 admin.site.register(PageRep,PageRepAdmin)
 admin.site.register(Station,StationAdmin)
 admin.site.register(Pageno,PagenoAdmin)
-admin.site.register(Emp,EmpAdmin)
+admin.site.register(Employee,EmployeeAdmin)
 admin.site.register(Rep,RepAdmin)
 admin.site.register(Clt,CltAdmin)
 admin.site.register(Fgarea,FgareaAdmin)
-admin.site.register(UserProfile,UserProfileAdmin)

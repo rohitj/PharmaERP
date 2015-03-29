@@ -61,22 +61,23 @@ class Pmrecipe(models.Model):
 
 #from es.models import Rmarea
 class Ptransport(models.Model):
-      name=models.CharField(max_length=40)
-      rmarea_id=models.ForeignKey('es.Rmarea')
-
-      def __str__(self):
-          return self.name
-
-#from es.models import Rmarea
-class Contacts(models.Model):                  # loan licensing
+    code
     name=models.CharField(max_length=40)
-    rmarea_id=models.ForeignKey('es.Rmarea')  # optional so avoided the foreignkey
-    email1=models.CharField(max_length=40)
-    email2=models.CharField(max_length=40)
-    email3=models.CharField(max_length=40)
+    rmarea_id=models.ForeignKey('es.Rmarea')
 
     def __str__(self):
-        return '%s %s ' % (self.name, self.rmarea_id)
+        return self.name
+
+#from es.models import Rmarea
+#class Contacts(models.Model):                  # loan licensing
+#    name=models.CharField(max_length=40)
+#    rmarea_id=models.ForeignKey('es.Rmarea')  # optional so avoided the foreignkey
+#    email1=models.CharField(max_length=40)
+#    email2=models.CharField(max_length=40)
+#    email3=models.CharField(max_length=40)
+#
+#    def __str__(self):
+#        return '%s %s ' % (self.name, self.rmarea_id)
 
 #from es.models import Rmarea
 from django.contrib.auth.models import User
@@ -121,10 +122,10 @@ class Porder(models.Model):
         return '%s %s %s' % (self.pordermaster_id,self.packing_id, self.test())
 
 #from es.models import Rmarea
-class Mplanmaster(models.Model):
-    rmarea_id=models.ForeignKey('es.Rmarea')
-    fdate=models.DateField()
-    tdate=models.DateField()
+#class Mplanmaster(models.Model):
+#    rmarea_id=models.ForeignKey('es.Rmarea')
+#    fdate=models.DateField()
+#    tdate=models.DateField()
 
 class Operation(models.Model):
     pgroup_id=models.ForeignKey('mm.Pgroup')

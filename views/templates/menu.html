@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+	{% autoescape off %}
+	<div class="mainbody contain clearfix">
+	{% if header %}
+		<h2> {{ header }} </h2>
+	{% endif %}
+
+	<a href="/employee/"> Employee </a> <br />
+	<a href="/client/"> Client </a> <br />
+	<a href="/plant/"> Plant </a> <br />
+	<a href="/pgroup/"> Product Group </a> <br />
+	<a href="/rgroup/"> Raw Material Group </a> <br />
+	</div>
+	{% endautoescape %}
+
+{% endblock %}
