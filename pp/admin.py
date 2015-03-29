@@ -1,8 +1,8 @@
 from django.contrib import admin
-from pf2.pp.models import *
-from pf2.es.models import *
-from pf2.mm.models import *
-from pf2.pp.forms import PoForm
+from pp.models import *
+from es.models import *
+from mm.models import *
+from pp.forms import PoForm
 import datetime
 from django.forms.models import BaseInlineFormSet
 

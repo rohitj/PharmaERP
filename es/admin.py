@@ -1,6 +1,6 @@
 from django.contrib import admin
-from pf2.es.models import Clt,Emp,Fgarea,Station,Pageno,Rep,PageRep,Salecode,Saletax,Rmarea,UserProfile
-from pf2.es.models import Bptype,Bpartner
+from es.models import Clt,Emp,Fgarea,Station,Pageno,Rep,PageRep,Salecode,Rmarea,UserProfile
+from es.models import Bptype,Bpartner
 
 import datetime
 
@@ -37,8 +37,6 @@ class RepAdmin(admin.ModelAdmin):
 class SalecodeAdmin(admin.ModelAdmin):
     model = Salecode
 
-class SaletaxAdmin(admin.ModelAdmin):
-    model = Saletax
 
 class RmareaAdmin(admin.ModelAdmin):
     model=Rmarea
@@ -46,7 +44,6 @@ class RmareaAdmin(admin.ModelAdmin):
 admin.site.register(Bptype,BptypeAdmin)
 admin.site.register(Bpartner,BpartnerAdmin)
 admin.site.register(Rmarea,RmareaAdmin)
-admin.site.register(Saletax,SaletaxAdmin)
 admin.site.register(Salecode,SalecodeAdmin)
 admin.site.register(PageRep,PageRepAdmin)
 admin.site.register(Station,StationAdmin)

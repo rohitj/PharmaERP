@@ -172,7 +172,7 @@ class Mbatch(models.Model):
         return self.MbatchPo__set.aggregate(total=Sum('quantity'))['total']
 
     def distt(self):
-        from pf2.mm.models import Packing
+        from PharmaERP.mm.models import Packing
         dt=MbatchPo.objects.values("porder_id__packing_id").annotate(sum=Sum("quantity"))
         s=0
         for d in dt:
@@ -181,7 +181,7 @@ class Mbatch(models.Model):
         return s
 
     def batchsize(self):
-        from pf2.mm.models import Packing
+        from PharmaERP.mm.models import Packing
         dt=MbatchPo.objects.filter(mbatch_id=self).values("porder_id__packing_id").annotate(sum=Sum("quantity"))
         s=0
         for d in dt:
@@ -284,9 +284,9 @@ class Fs(object):
     lfs=None
 
     def getfs(self):
-        from pf2.mm.models import Rsr
-        from pf2.mm.models import Rbatch
-        from pf2.mm.models import Mtype
+        from PharmaERP.mm.models import Rsr
+        from PharmaERP.mm.models import Rbatch
+        from PharmaERP.mm.models import Mtype
         from decimal import Decimal
         qr=self.req
         pl=[]

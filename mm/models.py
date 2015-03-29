@@ -26,7 +26,7 @@ class Pgroup(models.Model):
     isactive=models.BooleanField(default=True)							# Only active allowed for production
 
     def required(self,b,dep):
-         from pf2.pp.models import Rmrecipemaster,Rmrecipe
+         from PharmaERP.pp.models import Rmrecipemaster,Rmrecipe
          qty=b.batchsize()
 
          if dep=="RM":
