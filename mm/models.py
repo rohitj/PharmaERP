@@ -4,29 +4,26 @@ from django import forms
 import datetime
 
 #------------------------------------------------------------------------------------------------
+#  MM Module:  Product & raw material | Stock register for both | Unit Mgt | Supplier & purchases
+#------------------------------------------------------------------------------------------------
 
-# Test model
-class Book(models.Model):
-    name = models.CharField(max_length=200)
-
-#from fi.models import Code
+# Raw material Supplier master
 class Sup(models.Model):
     code=models.OneToOneField('fi.Code',primary_key=True)
     stno=models.CharField(max_length=30,null=True,blank=True,verbose_name="Sale Tax No")
-    eccno=models.CharField(max_length=20,null=True,blank=True)
-    identity=models.CharField(max_length=10,null=True,blank=True)
-    active=models.BooleanField(default=True)
+    eccno=models.CharField(max_length=20,null=True,blank=True)				# Simple text
+    identity=models.CharField(max_length=10,null=True,blank=True)           # Not understood myself
+    active=models.BooleanField(default=True)								# Useful while selecting from dropdown
 
     def __str__(self):
         return '%s' % (self.code)
 
-#from es.models import Rmarea
-#from pp.models import Rmrecipe
+# Product group master [ Each item indicate one product line]
 class Pgroup(models.Model):
     groupname = models.CharField(max_length=60)
-    bs_cat=models.CharField(max_length=10,null=True,blank=True)
+    bs_cat=models.CharField(max_length=10,null=True,blank=True)			# Category as defined by Govt of India.
     rmarea_id=models.ForeignKey('es.Rmarea')
-    isactive=models.BooleanField(default=True)
+    isactive=models.BooleanField(default=True)							# Only active allowed for production
 
     def required(self,b,dep):
          from pf2.pp.models import Rmrecipemaster,Rmrecipe
@@ -34,7 +31,7 @@ class Pgroup(models.Model):
 
          if dep=="RM":
              q=Rmrecipemaster.objects.filter(pgroup_id=self, fdate__lt= datetime.date.today(), tdate__gt=datetime.date.today())
-             f= q[0].rmrecipe_set.all().extra(select={"treq":0L,"alloted":0L})
+             f= q[0].rmrecipe_set.all().extra(select={"treq":0,"alloted":0})
              for item in f:
                 item.treq=item.cal(qty)
                 item.nreq=0.00
@@ -46,26 +43,27 @@ class Pgroup(models.Model):
 
     def __str__(self):
         return "%s" % (self.groupname)
-
+		
+# Indicates one product packing within a product line [ will have individual formulation]
 class Packing(models.Model):
     pgroup_id=models.ForeignKey(Pgroup)
     packname=models.CharField(max_length=30)
 #    packgroup=models.CharField(max_length=4)  #same packing with small vriation. analysis can be done with this group
-    tab_tp=models.CharField(max_length=1,null=True)
-    unitppack=models.IntegerField(null=True,blank=True)
-    qty_per_ca=models.IntegerField(null=True,blank=True)
-    box=models.IntegerField(null=True,blank=True)
-    ptype=models.IntegerField(null=True,blank=True)
-    cfactor=models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
-    rate_cs=models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
-    rate_bsd=models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
-    rate_bsg=models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
-    inv_1=models.IntegerField(null=True,blank=True)
-    inv_2=models.IntegerField(null=True,blank=True)
-    btype=models.IntegerField(null=True,blank=True)
-    dlfixed=models.CharField(max_length=10,null=True,blank=True)
-    series=models.IntegerField(null=True,blank=True)
-    SS= (('1',u'Sale'),('2','Sample'))
+    tab_tp=models.CharField(max_length=1,null=True)				# Should be omitted after discussion.
+    unitppack=models.IntegerField(null=True,blank=True)			# How many production units contained in a packing say number of tablet in a packing
+    qty_per_ca=models.IntegerField(null=True,blank=True)		# How many packings in a case ( which is used for shipment)
+    box=models.IntegerField(null=True,blank=True)				# How many packings in a box ( which is used for shipment)
+    ptype=models.IntegerField(null=True,blank=True)				# Don't remember 
+    cfactor=models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)  # Don't remember
+    rate_cs=models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)  # Closing stock rate used for financial reporting
+    rate_bsd=models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)  # Balance sheet related rate used for financial reporting
+    rate_bsg=models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)	# RT12 report related rate used for financial reporting
+    inv_1=models.IntegerField(null=True,blank=True)						#  Crtical invetory level -I
+    inv_2=models.IntegerField(null=True,blank=True)						#  Crtical invetory level -II
+    btype=models.IntegerField(null=True,blank=True)						# Dont remember
+    dlfixed=models.CharField(max_length=10,null=True,blank=True)		# Fixed text for each packing
+    series=models.IntegerField(null=True,blank=True)					# Fixed text used for production
+    SS= (('1',u'Sale'),('2','Sample'))									# Each packing is designatec as sale or sample item.
     sale_or_sample=models.CharField(max_length=1,default='D',choices=SS)
 
     def __str__(self):
@@ -74,37 +72,40 @@ class Packing(models.Model):
     def fst(self):
         return 10
 
+# List of supplier of finished product- Pharmasynth sometimes buy finshed product and market those product. Not to be used.
 class Psup(models.Model):         #product suppllier
     code=models.OneToOneField('fi.Code',primary_key=True)
 
+# Not to be used.
 class Recno(models.Model):
     psup_id=models.ForeignKey(Psup)
     date=models.DateField('receipt date')
-
+# Not to be used.
 class Pbatch(models.Model):
     recno_id=models.ForeignKey(Recno)
     batchname=models.CharField(max_length=20)
     expiery=models.DateField('expiery date')
 
-#from sd.models import Vno
+# Finished goods store items.
 class Psr(models.Model):
-    vno_id=models.IntegerField()  #ForeignKey(Vno,blank=True,null=True)
+    vno_id=models.IntegerField()  #ForeignKey(Vno,blank=True,null=True)		# Purchase voucher number
     pack_id=models.ForeignKey(Packing)
-    pbatch_id=models.ForeignKey(Pbatch)
-    fullcases=models.IntegerField(null=True,blank=True)
+    pbatch_id=models.ForeignKey(Pbatch)										# Not to be used
+    fullcases=models.IntegerField(null=True,blank=True)						# Finished goods  full boxes in stock
     looseqty=models.IntegerField(null=True,blank=True)
     quantity=models.DecimalField(max_digits=10, decimal_places=0)
 
     def __str__(self):
         return ' '
-#------------------------------------------------------------------------------------------------
+
+# Units -  to be extended with additional fields 
 class Unit(models.Model):
     name=models.CharField(max_length=10,unique=True)
 
     def __str__(self):
         return self.name
 
-
+# Dimension master say VOLUME MASS DENSITY etc.
 class Quantity(models.Model):
     name=models.CharField(max_length=10)
     unit=models.ForeignKey(Unit)
@@ -112,7 +113,7 @@ class Quantity(models.Model):
     def __str__(self):
         return self.name
 
-
+# Unit conversion interface from one unit to another
 class Uc(models.Model):
     quantity_id=models.ForeignKey(Quantity)
     u1=models.ForeignKey(Unit,related_name='fromunit')
@@ -122,7 +123,7 @@ class Uc(models.Model):
     def __str__(self):
         return "%s %s " % (self.u1 + "-->"+  self.u2)
 
-
+#  Material group-  class of input materials
 class Rgroup(models.Model):
     groupname = models.CharField(max_length=60)
     DEPT_CHOICES=(('RM','Raw Material'),('PM','Packing Material'))
@@ -131,7 +132,7 @@ class Rgroup(models.Model):
     def __str__(self):
         return self.groupname
 
-#from es.models import Rmarea
+# List of actual usable materials baed on which formulation recipe if created.
 class Rcode(models.Model):
     rgroup_id=models.ForeignKey(Rgroup)
     rname=models.CharField(max_length=60)
@@ -147,12 +148,13 @@ class Rcode(models.Model):
         rid=self.id
         return self.rbatch_set.raw("select a.id,a.rcode_id_id,a.quantity,sum(b.quantity) as used,(a.quantity-sum(b.quantity)) as bal from mm_rbatch a,mm_rsr b where a.rcode_id_id=%s and a.id=b.rbatch_id_id group by a.id having a.quantity>used",[rid])
 
-
+# Movement type whch reflect trnsaction type { say purchase| consumption| loss | transfer etc.)
 class Mtype(models.Model):
 #    USAGE_CHOICES=(("O","Opening Balance"),("P","Purchase"),("M","Miscellaneous"),("R","Reserved"))
     mtype=models.PositiveIntegerField(primary_key=True)
     description=models.CharField(max_length=20,null=True)
 
+# Single purchase bill header details 
 class Pur(models.Model):
     sup_id=models.ForeignKey(Sup)
     REF_CHOICES=(("JV","Challan"),("PI","Purchase Bill"))
@@ -180,6 +182,7 @@ class Pur(models.Model):
 
     ino=models.IntegerField(unique_for_year="date")  #internal purchase no.
 
+# Purchase item batch details [including quality status say purity etc]
 class Rbatch(models.Model):
     pur_id=models.IntegerField(null=True,blank=True)
     rcode_id=models.ForeignKey(Rcode)
@@ -212,8 +215,7 @@ class Rbatch(models.Model):
 
 #quality data shall flow from existing system
 
-#from pp.models import Fstype
-#from es.models import Rmarea
+#  Material inventory transaction register- all incoming and outgoing
 class Rsr(models.Model):
     fstype_id=models.ForeignKey('pp.Fstype',null=True,blank=True)
     tab_tp=models.CharField(max_length=1,blank=True,null=True)

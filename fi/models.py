@@ -2,10 +2,13 @@ from django.db import models
 from django.forms import ModelForm
 
 #------------------------------------------------------------------------------------------------
+#  FI Module:  Ledger account head and entry alongwih bill allocation
+#------------------------------------------------------------------------------------------------
 
 class Book(models.Model):
     name=models.CharField(max_length=60)
 
+# Ledger heads including customer / suplier / employee/ others 
 class Code(models.Model):
     name=models.CharField(max_length=60)
     address=models.CharField(max_length=60,null=True,blank=True)
@@ -25,8 +28,8 @@ class Code(models.Model):
     class Meta:
          verbose_name = "Account Head"
 
-#from sd.models import Vno
-#from mm.models import Pur
+
+# All financial transactions in ledger
 class Led(models.Model):
     doctype=models.CharField(max_length=2)
     nature=models.CharField(max_length=1)
@@ -40,6 +43,7 @@ class Led(models.Model):
     amount=models.DecimalField(max_digits=12, decimal_places=2)
     refdoc=models.IntegerField()
 
+# Billwise paymnet allocation
 class Pay(models.Model):
     bill_id=models.IntegerField()             # a led id for bill
     pay_id=models.ForeignKey(Led)
