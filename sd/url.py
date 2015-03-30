@@ -1,14 +1,11 @@
 ﻿from django.conf.urls import patterns, include, url
 from django.views.generic import DetailView, ListView
 
-from pf2.sd.models import *
-#from django.conf.urls.defaults import *
-from django.contrib import admin
-from django.contrib import admin
-
-admin.autodiscover()
-
 urlpatterns = patterns('',
     # Examples:
-    url(r'^test/(?P<year>\d+)/$','test'),
+    url(r'^customer/$', 'views.generalclass.newlist', {"classname": "sd.models.Customer", }),
+    url(r'^customer/new/$', 'views.generalclass.newnew', {"classname": "sd.models.Customer"}, "create_customer"),
+    url(r'^customer/view/(?P<id>\d*)/$', 'views.generalclass.view', {"classname": "sd.models.Customer"}, "view_customer"),
+    url(r'^customer/edit/(?P<id>\d*)/$', 'views.generalclass.edit', {"classname": "sd.models.Customer"}, "edit_customer"),
+
 )

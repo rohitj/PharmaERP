@@ -1,15 +1,16 @@
 from django.contrib import admin
-from mm.models import Sup,Pgroup,Packing,Psr,Rgroup,Rcode,Uc,Unit,Quantity
-
+from mm.models import PGroup,Packing,RGroup,Rcode,Uc,Unit,Quantity,Supplier
 import datetime
 
-class SupAdmin(admin.ModelAdmin):
-    model=Sup
 
-from sd.models import Plist
-class PlistInline(admin.TabularInline):
-    model=Plist
-    extra=2
+#from sd.models import Plist
+#class PlistInline(admin.TabularInline):
+#    model=Plist
+#    extra=2
+
+class SupplierAdmin(admin.ModelAdmin):
+    model=Supplier
+
 
 class PackingInline(admin.TabularInline):
     model=Packing
@@ -17,27 +18,27 @@ class PackingInline(admin.TabularInline):
     exclude=('dlfixed','cfactor','series')
 
 
-class PgroupAdmin(admin.ModelAdmin):
-    list_display=['groupname']
+class PGroupAdmin(admin.ModelAdmin):
+    list_display=['name']
     list_filter=['bs_cat']
-    ordering=['groupname',]
-    search_fields=['groupname',]
-    fieldsets=((None,{'fields':('rmarea_id',('groupname','bs_cat'),)})),
+    ordering=['name',]
+    search_fields=['name',]
+    fieldsets=((None,{'fields':('plant',('name','bs_cat'),)})),
 
-    def queryset(self, request):
-        return super(PgroupAdmin, self).queryset(request).filter(isactive=True)
+    def get_queryset(self, request):
+        return super(PGroupAdmin, self).queryset(request).filter(isactive=True)
 
 
 
-class PackingAdmin(admin.ModelAdmin):
-    search_fields=['packname',]
-    inlines=[PlistInline]
+#class PackingAdmin(admin.ModelAdmin):
+#    search_fields=['packname',]
+#    inlines=[PlistInline]
 
-class RgroupAdmin(admin.ModelAdmin):
-    model=Rgroup
+class RGroupAdmin(admin.ModelAdmin):
+    model=RGroup
     list_filter=['dept']
-    search_fields=['groupname',]
-    ordering=['groupname',]
+    search_fields=['name',]
+    ordering=['name',]
 
 class RcodeAdmin(admin.ModelAdmin):
     model=Rcode
@@ -45,20 +46,16 @@ class RcodeAdmin(admin.ModelAdmin):
 class UnitAdmin(admin.ModelAdmin):
     model=Unit
 
-class UcInline(admin.TabularInline):
-    model=Uc
-
 class QuantityAdmin(admin.ModelAdmin):
     model=Quantity
-    inlines=[UcInline]
 
 admin.site.register(Quantity,QuantityAdmin)
 
-admin.site.register(Rgroup,RgroupAdmin)
+admin.site.register(RGroup,RGroupAdmin)
 admin.site.register(Rcode,RcodeAdmin)
-admin.site.register(Sup,SupAdmin)
 
-admin.site.register(Pgroup, PgroupAdmin)
-admin.site.register(Packing, PackingAdmin)
+admin.site.register(PGroup, PGroupAdmin)
+#admin.site.register(Packing, PackingAdmin)
 
 admin.site.register(Unit,UnitAdmin)
+admin.site.register(Supplier,SupplierAdmin)

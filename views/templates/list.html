@@ -8,7 +8,7 @@
 	<!--     -->
 		<table width="100%">
 			<tr>
-				<td>{% if create_url %}<a onclick="javascript:$('#newObject').show();">Click for New</a>{% endif %}</td>
+				<td>{% if create_url %}<a onclick="javascript:newObject('{{ create_url }}');">Click for New</a>{% endif %}</td>
 				<td align="right">
 					{% if allow_search %}
 					<form method='GET' action='.' enctype="multipart/form-data">Search : <input type='text' name='search' /><input type='submit' value='Search' /></form>
@@ -26,61 +26,14 @@
 		{% endif %}
 	<!-- header ends -->
 
-	<!-- Create Form -->
-		{% if form %}
+		
 		<div class="popupform" id="newObject">
-		<a onclick="javascript:$('#newObject').hide();"><img src='/site_media/images/cancel.gif' alt="close" id="close" /></a>
-		<h2>New</h2>
-		<form action="." method="POST" enctype="multipart/form-data">
-			<table width="500">
-			{{ form.as_table }}
-			</table>
-
-		
-	{% if formset %}
-		<!-- management form -->
-		{%for f in formset.management_form%}
-			{{f}}
-		{%endfor%}
-		<!-- hidden fields -->
-		{% for form in formset.forms %}
-			{% for field in form.hidden_fields %}
-				{{ field }}
-			{% endfor %}
-		{% endfor %}
-
-		{% for dict in formset.errors %}
-			{% for error in dict.values %}
-				{{ error }} <br />
-			{% endfor %}
-		{% endfor %}
-
-		<table class="multiform">
-
-		{% for form in formset.forms %}
-			{% if forloop.first %}
-				<tr>
-				{% for field in form.visible_fields %}
-					<th>{{ field.label_tag }}</th>
-				{% endfor %}
-				</tr>
-			{%endif%}
-			<tr {% if forloop.last %}class="last_form" {% endif %}>
-				{% for field in form.visible_fields %}
-					<td>{{ field }}</td>
-				{% endfor %}
-			</tr>
-		{% endfor %}
-		</table>
-			<p><input type="button" value="Add More" id="add_more" onclick="cloneMore('.last_form', '{{ form_set }}');">
-			</p>
-	{% endif %}
-			<p><input type="submit" onclick="this.disabled=true,this.form.submit();" value="Submit"></p>
-		</form>
+			<a onclick="javascript:$('#newObject').hide();"><img src='/site_media/images/cancel.gif' alt="close" id="close" /></a>
+			<form action='' method='POST'>
+			<div id="newObjectContent"></div>
+			<p><a onclick="this.disabled=true,submitnewform($('#newObject').children('form').attr('action'), 'newObject');" >Submit</a></p>
+			</form>
 		</div>
-		{% endif %}
-
-		
 		<div class="popupform" id="editObject">
 			<a onclick="javascript:$('#editObject').hide();"><img src='/site_media/images/cancel.gif' alt="close" id="close" /></a>
 			<form action='' method='POST'>

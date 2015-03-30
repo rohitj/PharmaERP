@@ -1,5 +1,8 @@
 {% if form.errors %}error <br />{% endif %}
-	<h2>Edit RMArea</h2>
+	<h2>{{ header }} }}</h2>
 	<table width="500">
 		{{ form.as_table }}
+		{% if form2 %}
+			{{ form2.as_table }}
+		{% endif %}
 	</table>

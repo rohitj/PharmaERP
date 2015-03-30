@@ -1,6 +1,6 @@
-from pp.models import Pordermaster,Contacts,Ptransport,Mbatch,Distt
-from es.models import Rmarea
-from mm.models import Pgroup
+from pp.models import Pordermaster,Ptransport,Mbatch,Distt
+from es.models import Plant
+from mm.models import PGroup
 from django import forms
 from django.forms import ModelForm
 from django.contrib.admin import widgets
@@ -10,13 +10,13 @@ class PoForm(ModelForm):
 #    date=forms.DateField(widget=SelectDateWidget())
     class Meta:
         model=Pordermaster
-        exclude=('rmarea_id','userid',)
+        exclude=('plant','userid',)
 
 class BatchForm(ModelForm):
     class Meta:
         model=Mbatch
 #        fieldsets = ( (None, {'fields': (('pgroup_id','fssno','batch_no','priority','isrelased'), )        }),    )
-        exclude={'stage','phase','operation','pmrecipemaster_id','rmrecipemaster_id','date_completion','isrelased',}
+        exclude={'stage','phase','operation','pmrecipemaster','rmrecipemaster','date_completion','isrelased',}
 
     def __init__(self,*args,**kwargs):
         super(BatchForm,self).__init__(*args,**kwargs)
@@ -25,9 +25,3 @@ class BatchForm(ModelForm):
 
 
 
-
-class RmareaForm(ModelForm):
-#    date=forms.DateField(widget=SelectDateWidget())
-    class Meta:
-        model=Pgroup
-        fields=('rmarea_id',)

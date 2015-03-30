@@ -1,23 +1,22 @@
 from django.contrib import admin
 from es.models import *
-from es.models import Bptype,Bpartner
 
 import datetime
 
-class BptypeAdmin(admin.ModelAdmin):
-    model=Bptype
+class BPtypeAdmin(admin.ModelAdmin):
+    model=BPtype
 
-class BpartnerAdmin(admin.ModelAdmin):
-    model=Bpartner
+class BPartnerAdmin(admin.ModelAdmin):
+    model=BPartner
 
-class CltAdmin(admin.ModelAdmin):
-    model=Clt
+class ClientDetailsAdmin(admin.ModelAdmin):
+    model=ClientDetails
 
 class EmployeeAdmin(admin.ModelAdmin):
     model=Employee
 
-class FgareaAdmin(admin.ModelAdmin):
-    model=Fgarea
+class DepoAdmin(admin.ModelAdmin):
+    model=Depo
 
 class StationAdmin(admin.ModelAdmin):
     model=Station
@@ -28,27 +27,24 @@ class PagenoAdmin(admin.ModelAdmin):
 class PageRepAdmin(admin.ModelAdmin):
     model=PageRep
 
-class RepAdmin(admin.ModelAdmin):
-    model=Rep
+class RepresentativeAdmin(admin.ModelAdmin):
+    model=Representative
 
-class SalecodeAdmin(admin.ModelAdmin):
-    model = Salecode
+class SalesTaxAdmin(admin.ModelAdmin):
+    model = SalesTax
 
-class SaletaxAdmin(admin.ModelAdmin):
-    model = Saletax
 
-class RmareaAdmin(admin.ModelAdmin):
-    model=Rmarea
+class PlantAdmin(admin.ModelAdmin):
+    model=Plant
 
-admin.site.register(Bptype,BptypeAdmin)
-admin.site.register(Bpartner,BpartnerAdmin)
-admin.site.register(Rmarea,RmareaAdmin)
-admin.site.register(Saletax,SaletaxAdmin)
-admin.site.register(Salecode,SalecodeAdmin)
+admin.site.register(BPtype,BPtypeAdmin)
+admin.site.register(BPartner,BPartnerAdmin)
+admin.site.register(Plant,PlantAdmin)
+admin.site.register(SalesTax,SalesTaxAdmin)
 admin.site.register(PageRep,PageRepAdmin)
 admin.site.register(Station,StationAdmin)
 admin.site.register(Pageno,PagenoAdmin)
 admin.site.register(Employee,EmployeeAdmin)
-admin.site.register(Rep,RepAdmin)
-admin.site.register(Clt,CltAdmin)
-admin.site.register(Fgarea,FgareaAdmin)
+admin.site.register(Representative,RepresentativeAdmin)
+admin.site.register(ClientDetails,ClientDetailsAdmin)
+admin.site.register(Depo,DepoAdmin)

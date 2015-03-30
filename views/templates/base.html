@@ -18,6 +18,16 @@
     {% endblock %}
 	<link type="text/css" href="/site_media/jquery/css/ui-lightness/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
 	<script type="text/javascript">
+		function newObject(myurl) {
+			$.ajax({
+				url: myurl,
+				success: function(data){
+					$('#newObjectContent').html(data);
+					$('#newObject').children("form").attr('action', myurl);
+					$('#newObject').show();
+				}
+			});
+		}
 		function editObject(myurl) {
 			$.ajax({
 				url: myurl,
@@ -55,6 +65,23 @@
 					$('#viewObject').show();
 				}
 			});
+		}
+		function submitnewform(myurl, divid) {
+			alert(myurl);
+			alert($('#' + divid).children('form').serialize());
+			alert($('#id_pmrecipe_set-0-fraction').serialize());
+			$.post(myurl, $('#' + divid).children('form').serialize(), 
+				function(data) {
+					$('#' + divid + 'Content').html(data);
+					if(data.substring(0, 5) != "error") {
+						$('#newObject').hide();
+						//Update the row here
+						//$('#result')
+					}
+					else {
+					}
+				}
+			);
 		}
 		function submiteditform(myurl, divid) {
 			$.post(myurl, $('#' + divid).children('form').serialize(), 

@@ -2,9 +2,98 @@ from django.db import models
 from django.forms import ModelForm
 from django import forms
 from django.contrib.auth.models import User
-from django.forms import ModelForm
+from django.conf import settings
+import os
+from django.core.urlresolvers import resolve
 
-class Code(models.Model):
+#----------------------------------------------------------------------------------------------------------------------
+#  ES Module:  Enterprise Structure model with Client | Business partners | Parties place orders | Sale Areas | Sale Tax | Employee
+#-------------------------------------------------------------------------------------------------------------------------
+
+
+class MyModel(models.Model):
+    _classname=""
+
+    @models.permalink
+    def create_url(self, request, extra_params=None):
+        return ("create_" + self._classname.lower(), (), extra_params)
+        
+    @models.permalink
+    def edit_url(self, request=None):
+        return ("edit_"+self._classname.lower(), (), {'id':self.id})
+
+    @models.permalink
+    def view_url(self, request=None):
+        return ("view_"+self._classname.lower(), (), {'id':self.id})
+
+    @models.permalink
+    def delete_url(self, request=None):
+        return ("delete_"+self._classname.lower(), (), {'id':self.id})
+
+    def display_name(self, request):
+        return self._classname
+
+    def view_template(self, request):
+        template = os.path.join(self._meta.app_label, "view"+self._classname.lower()+".html") 
+        temp = os.path.join(settings.BASE_DIR, self._meta.app_label, "templates", template)
+        if os.path.isfile(os.path.join(settings.BASE_DIR, temp)):
+          return template
+        return "view.html"
+        
+    def link_template(self, request):
+        template = os.path.join(self._meta.app_label, "link"+self._classname.lower()+".html") 
+        temp = os.path.join(settings.BASE_DIR, self._meta.app_label, "templates", template)
+        if os.path.isfile(os.path.join(settings.BASE_DIR, temp)):
+          return template
+        return "link.html"
+
+    def list_template(self, request):
+        return "list.html"
+
+    def new_template(self, request):
+        template = os.path.join(self._meta.app_label, "new"+self._classname.lower()+".html") 
+        temp = os.path.join(settings.BASE_DIR, self._meta.app_label, "templates", template)
+        if os.path.isfile(os.path.join(settings.BASE_DIR, temp)):
+          return template
+        return "new.html"
+
+    def edit_template(self, request):
+        template = os.path.join(self._meta.app_label, "edit"+self._classname.lower()+".html") 
+        temp = os.path.join(settings.BASE_DIR, self._meta.app_label, "templates", template)
+        if os.path.isfile(os.path.join(settings.BASE_DIR, temp)):
+          return template
+        return "edit.html"
+        
+    def is_create_allowed(self, request):
+        return True
+
+    def is_edit_allowed(self, request):
+        return True
+
+    @models.permalink
+    def add_dependent_url(self, request=None):
+        return ("add_dependent_" + self._classname.lower(), (), {'id':self.id})
+
+    def dependent(self, request, classname_nested=None):
+        return None
+
+
+    def add_dependent_template(request):
+        return "add_dependent_" + self._classname.lower() + ".html"
+
+
+    def newObjectContent(self, request):
+        return ""
+        
+        
+    class Meta:
+        abstract=True
+        
+    def updateForms(self, request, form, formset):
+        return form, formset
+
+
+class Code(MyModel):
     name=models.CharField(max_length=60)
     address=models.CharField(max_length=60,null=True,blank=True)
     SUPERCLASS_CHOICES=(("ASSETS","ASSETS"),("LIABILITIIES","LIABILITIIES"),("EXPENDITURE","EXPENDITURE"))
@@ -15,16 +104,9 @@ class Code(models.Model):
     ssclass=models.CharField(max_length=3,choices=GCLASS_CHOICES,null=True,blank=True)
     schedule=models.CharField(max_length=15,null=True,blank=True)
 
-    def __str__(self):
-        return "%s %s %s %s" % (self.name, self.superclass, self.gclass,self.test())
-
-    def test(self):
-         return "OK"
-    class Meta:
-         verbose_name = "Account Head"
-
 
 class Employee(Code):
+    _classname="Employee"
     user=models.OneToOneField(User)
     jdate=models.DateField()
     designation=models.CharField(max_length=30,blank=True,null=True)
@@ -34,46 +116,15 @@ class Employee(Code):
     bparea=models.CharField(max_length=2,blank=True,null=True)   # business partner area say UG
 
     def __str__(self):
-        return '%s ' % (self.code)
+        return '%s ' % (self.name)
 
     def as_table(self):
-        return "<td>%s</td><td>%s</td><td>%s</td><td>%s</td>"%(self.name, self.code, self.mode, self.clt)
+        return "<td>%s</td><td>%s</td><td>%s</td><td>%s</td>"%(self.name, self.user.username, self.mobile, self.designation)
 
     def as_table_header(self):
-        return "<th>Name</th><th>Code</th><th>Mode</th><th>clt</th>"
+        return "<th>Name</th><th>Username</th><th>Mobile</th><th>designation</th>"
 
-    @models.permalink
-    def create_url(request):
-        return ("create_employee", (), {})
         
-    @models.permalink
-    def edit_url(self, request=None):
-        return ("edit_employee", (), {'id':self.id})
-
-    @models.permalink
-    def view_url(self, request=None):
-        return ("view_employee", (), {'id':self.id})
-
-    def display_name(self, request):
-        return "Employee"
-
-    def template(request):
-        return "general_result.html"
-
-    def view_template(request):
-        return "es/viewemployee.html"
-        
-    def link_template(request):
-        return "es/linkemployee.html"
-
-    def edit_template(request):
-        return "es/editemployee.html"
-        
-    def is_create_allowed(request):
-        return True
-
-    def is_edit_allowed(request):
-        return True
 
 
 class EmployeeForm(ModelForm):
@@ -82,27 +133,63 @@ class EmployeeForm(ModelForm):
 
     class Meta:
         model=Employee
-        exclude=()
+        exclude=("user",)
 
 
-class BPtype(models.Model):
+# Business partner types
+class BPtype(MyModel):
+    _classname="BPtype"
     name=models.CharField(max_length=40)
 
     def __str__(self):
         return '%s ' % (self.name)
 
+    def as_table(self):
+        return "<td>%s</td>"%(self.name)
 
+    def as_table_header(self):
+        return "<th>Name</th>"
+
+class BPtypeForm(ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        super(BPtypeForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model=BPtype
+        exclude=()
+
+# List of business partners 
 class BPartner(Code):
-    name=models.CharField(max_length=60)
+    _classname="BPartner"
     bptype=models.ManyToManyField(BPtype)
 
     def __str__(self):
         return '%s ' % (self.name)
 
+    def as_table(self):
+        return "<td>%s</td><td>%s</td>"%(self.name, self.bptype.all())
+
+    def as_table_header(self):
+        return "<th>Name</th><th>Type</th>"
+
+    def display_name(self, request):
+        return "Business Partner"
+
+
+class BPartnerForm(ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        super(BPartnerForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model=BPartner
+        exclude=()
 
 
 
-class ClientDetails(models.Model):
+
+# Top level structure unit for enterprise
+class ClientDetails(MyModel):
+    _classname="ClientDetails"
     name = models.CharField(max_length=100)
     ce_no=models.CharField(max_length=30)
     dl_head=models.CharField(max_length=40)
@@ -117,51 +204,23 @@ class ClientDetails(models.Model):
     def as_table_header(self):
         return "<th>Name</th><th>Ce No</th><th>DL Head</th><th>DEF Area</th>"
 
-    @models.permalink
-    def create_url(request):
-        return ("create_client", (), {})
-        
-    @models.permalink
-    def edit_url(self, request=None):
-        return ("edit_client", (), {'id':self.id})
-
-    @models.permalink
-    def view_url(self, request=None):
-        return ("view_client", (), {'id':self.id})
-
     def display_name(self, request):
-        return "Client"
-
-    def template(request):
-        return "general_result.html"
-
-    def view_template(request):
-        return "viewclient.html"
-        
-    def link_template(request):
-        return "es/linkclient.html"
-
-    def edit_template(self, request):
-        return "es/editclient.html"
-        
-    def is_create_allowed(request):
-        return True
-
-    def is_edit_allowed(self, request):
-        return True
+        return "Client Details"
 
 
 class ClientDetailsForm(ModelForm):
     def __init__(self, request, *args, **kwargs):
-        super(ClientForm, self).__init__(*args, **kwargs)
+        super(ClientDetailsForm, self).__init__(*args, **kwargs)
 
     class Meta:
-        model=Client
+        model=ClientDetails
         exclude=()
 
 
-class Plant(models.Model):
-    clt_id=models.ForeignKey(Clt)
+# Location/Pants assigned to CLT
+class Plant(MyModel):
+    _classname="Plant"
+#    clt_id=models.ForeignKey(Clt)
     name=models.CharField(max_length=30)
     code=models.CharField(max_length=2)
     TYPES=(('PF',u'Internal'),('MB',u'Manufactured By'),('LL',u'Loan Licensing'))
@@ -171,9 +230,9 @@ class Plant(models.Model):
     def __str__(self):
         return "%s"% (self.name)
 
-    def lastorder(self):
-        from pf2.pp.models import Pordermaster
-        return "Text"  #Pordermaster.objects.all().aggregate(Max("date"))
+#    def lastorder(self):
+#        from pf2.pp.models import Pordermaster
+#        return "Text"  #Pordermaster.objects.all().aggregate(Max("date"))
 
     def as_table(self):
         return "<td>%s</td><td>%s</td><td>%s</td><td>%s</td>"%(self.name, self.code, self.mode, self.clt)
@@ -181,50 +240,19 @@ class Plant(models.Model):
     def as_table_header(self):
         return "<th>Name</th><th>Code</th><th>Mode</th><th>clt</th>"
 
-    @models.permalink
-    def create_url(request):
-        return ("create_plant", (), {})
-        
-    @models.permalink
-    def edit_url(self, request=None):
-        return ("edit_plant", (), {'id':self.id})
-
-    @models.permalink
-    def view_url(self, request=None):
-        return ("view_plant", (), {'id':self.id})
-
-    def display_name(self, request):
-        return "Plant"
-
-    def template(request):
-        return "general_result.html"
-
-    def view_template(request):
-        return "es/viewplant.html"
-        
-    def link_template(request):
-        return "es/linkplant.html"
-
-    def edit_template(request):
-        return "es/editplant.html"
-        
-    def is_create_allowed(request):
-        return True
-
-    def is_edit_allowed(request):
-        return True
-
 
 class PlantForm(ModelForm):
     def __init__(self, request, *args, **kwargs):
-        super(RmareaForm, self).__init__(*args, **kwargs)
+        super(PlantForm, self).__init__(*args, **kwargs)
 
     class Meta:
-        model=Rmarea
+        model=Plant
         exclude=()
 
 
-class Depo(models.Model):
+# Sales areas (Depo / warehouse etc)
+class Depo(MyModel):
+    _classname="Depo"
     TYPES=(('PR',u'Production'),('CF',u'Carry & Forarding'),('CI',u'Consingnee Agent'))
     name=models.CharField(max_length=30)
     type=models.CharField(max_length=2,choices=TYPES)
@@ -233,9 +261,26 @@ class Depo(models.Model):
 
     def __str__(self):
         return self.name
+    def as_table(self):
+        return "<td>%s</td><td>%s</td>"%(self.name, self.type)
+
+    def as_table_header(self):
+        return "<th>Name</th><th>type</th>"
 
 
-class Station(models.Model):
+class DepoForm(ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        super(DepoForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model=Depo
+        exclude=()
+
+
+
+# Marketing location centre 
+class Station(MyModel):
+    _classname="Station"
 #    fgarea_id=models.ForeignKey(Fgarea)
     name=models.CharField(max_length=20)
     asm=models.ForeignKey(Employee)
@@ -243,46 +288,108 @@ class Station(models.Model):
     def __str__(self):
         return self.name
 
-class Pageno(models.Model):
-    fgarea_id=models.ForeignKey(Fgarea)
+    def as_table(self):
+        return "<td>%s</td><td>%s</td>"%(self.name, self.asm)
+
+    def as_table_header(self):
+        return "<th>Name</th><th>ASM</th>"
+
+
+class StationForm(ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        super(StationForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model=Station
+        exclude=()
+
+
+# Subunit of Sales Area represented by one marketing representative
+class Pageno(MyModel):
+    _classname="Pageno"
+    station=models.ForeignKey(Station)
     name=models.CharField(max_length=20)
 
     def __str__(self):
         return self.name
 
+    def as_table(self):
+        return "<td>%s</td><td>%s</td>"%(self.name, self.station)
 
-class Rep(models.Model):
-    emp=models.OneToOneField(Employee,primary_key=True)
+    def as_table_header(self):
+        return "<th>Name</th><th>Station</th>"
+
+
+class PagenoForm(ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        super(PagenoForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model=Pageno
+        exclude=("station",)
+
+
+# marketing representative master
+class Representative(MyModel):
+    _classname="Representative"
+    employee=models.OneToOneField(Employee)
     currentpage=models.ForeignKey(Pageno)
 #    fgarea_id=models.ForeignKey(Fgarea)
 
     def __str__(self):
         return '%s %s' % (self.code,self.currentpage)
 
+    def as_table(self):
+        return "<td>%s</td><td>%s</td>"%(self.employee.name, self.currentpage)
 
-class PageRep(models.Model):
-    pageno_id=models.ForeignKey(Pageno)
-    rep_id=models.ForeignKey(Rep)
-    fdate=models.DateField('effective from')
-    tdate=models.DateField()
+    def as_table_header(self):
+        return "<th>Name</th><th>Current Page</th>"
+
+
+
+class RepresentativeForm(ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        super(RepresentativeForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model=Representative
+        exclude=()
+
+
+# Assigning rep to pagenumber at a given date
+class PageRep(MyModel):
+    _class="PageRep"
+    pageno=models.ForeignKey(Pageno)
+    representative=models.ForeignKey(Representative)
+    start_date=models.DateField('start from')
+    end_date=models.DateField('end date')
 
     def __str__(self):
         return '%s %s ' % (self.rep_id , self.fdate)
 
-#------------------------------------------------------------------------------------------------
+    def as_table(self):
+        return "<td>%s</td><td>%s</td><td>%s</td><td>%s</td>"%(self.pageno, self.representative, self.start_date, self.end_date)
+
+    def as_table_header(self):
+        return "<th>Page</th><th>Representative</th><th>Start Date</th><th>End Date</th>"
+
+    def display_name(self, request):
+        return "Page Representative"
 
 
-class Sup(Code):
-    stno=models.CharField(max_length=30,null=True,blank=True,verbose_name="Sale Tax No")
-    eccno=models.CharField(max_length=20,null=True,blank=True)
-    identity=models.CharField(max_length=10,null=True,blank=True)
-    active=models.BooleanField(default=True)
+class PageRepForm(ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        super(PageRepForm, self).__init__(*args, **kwargs)
 
-    def __str__(self):
-        return '%s' % (self.code)
+    class Meta:
+        model=PageRep
+        exclude=()
 
-class Salecode(Code):
-    fgarea_id=models.ForeignKey(Fgarea)
+
+#Tax classification based on Sales Area/ Purchase type/ SAles type/ and form type
+class SalesTax(Code):
+    _classname="SalesTax"
+    depo=models.ForeignKey(Depo)
     PURTYPE_CHOICES=(('LP','Local Purchase'),('CP','Central Purchase'))
     purtype=models.CharField(max_length=2,default='LP',choices=PURTYPE_CHOICES)
     SALETYPE_CHOICES=(('LST','Local Sale'),('CST','Central Sale'))
@@ -299,8 +406,26 @@ class Salecode(Code):
         return '%s %s ' % (self.saletype , self.a_form)
 
     class Meta:
-        unique_together = (('fgarea_id','purtype','saletype','a_form', ),)
+        unique_together = (('depo','purtype','saletype','a_form', ),)
 
 
+    def as_table(self):
+        return "<td>%s</td><td>%s</td><td>%s</td><td>%s</td>"%(self.depo, self.purtype, self.saletype, self.a_form)
+
+    def as_table_header(self):
+        return "<th>Depo</th><th>Purchase Type</th><th>Sale Type</th><th>A Form</th>"
+
+    def display_name(self, request):
+        return "Sales Tax"
+
+
+
+class SalesTaxForm(ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        super(SalesTaxForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model=SalesTax
+        exclude=()
 
 

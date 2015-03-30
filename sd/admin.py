@@ -1,6 +1,5 @@
 from django.contrib import admin
-from sd.models import Plist,Cust,Vno
-from mm.models import Psr
+from sd.models import Psr,Plist,Customer,VoucherNo
 import datetime
 
 
@@ -8,8 +7,8 @@ class PlistInline(admin.TabularInline):
     model=Plist
     extra=2
 
-class CustAdmin(admin.ModelAdmin):
-    model = Cust
+class CustomerAdmin(admin.ModelAdmin):
+    model = Customer
 
     def make_active(modeladmin,request,queryset):
         queryset.update(active=1)
@@ -22,10 +21,10 @@ class PsrInline(admin.TabularInline):
     model=Psr
     extra=10
 
-class VnoAdmin(admin.ModelAdmin):
+class VoucherNoAdmin(admin.ModelAdmin):
     fieldsets=((None,{'fields':(('date','cust_id'),)})),
     inlines=[PsrInline]
 
 
-admin.site.register(Vno, VnoAdmin)
-admin.site.register(Cust, CustAdmin)
+admin.site.register(VoucherNo, VoucherNoAdmin)
+admin.site.register(Customer, CustomerAdmin)

@@ -33,8 +33,11 @@
 		<h2>New</h2>
 		<form action="." method="POST" enctype="multipart/form-data">
 			{% csrf_token %}
-			<table width="500">
-			{{form.as_table }}
+			<table width="600">
+				{% if form2 %}
+					{{form2.as_table }}
+				{% endif %}
+				{{ form.as_table }}
 			</table>
 
 		
