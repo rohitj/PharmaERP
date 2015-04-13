@@ -36,6 +36,13 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'es',
+    'mm',
+    'pp',
+    'sd',
+    'fi',
+    'views',
+    'views.templatetags',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -58,11 +65,11 @@ WSGI_APPLICATION = 'PharmaERP.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE':'django.db.backends.mysql',
-	'options':{  'database': 'pf2',
-		'USER': 'root ',
-		'PASSWORD': 'rkj72449' }
-}
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'pf',
+        'USER': 'root',
+        'PASSWORD': '1234',
+    }
 }
 
 # Internationalization
@@ -83,3 +90,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+TEMPLATE=[{
+  'BACKEND': 'django.template.backends.django.DjangoTemplates',
+  'DIRS': [os.path.join(BASE_DIR, 'templates')],
+  'OPTIONS': {
+    'loaders': [
+      ('django.template.loaders.cached.Loader', [
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
+      ]),
+    ],
+  },
+}]

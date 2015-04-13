@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+	{% autoescape off %}
+	<div class="mainbody contain clearfix">
+	{% if header %}
+		<h2> {{ header }} </h2>
+	{% endif %}
+
+	<a href="/es/employee/"> Employee </a> <br />
+	<a href="/es/bptype/"> BPtype </a> <br />
+	<a href="/es/bpartner/"> Business Partner </a> <br />
+	<a href="/es/clientdetails/"> Client Details</a> <br />
+	<a href="/es/plant/"> Plant </a> <br />
+	<a href="/es/depo/"> Depo </a> <br />
+	<a href="/es/station/"> Station </a> <br />
+	<a href="/es/representative/"> Representative </a> <br />
+	<a href="/es/supplier/"> Supplier </a> <br />
+	<a href="/es/salestax/"> Sales Tax</a> <br />
+
+
+	<a href="/mm/pgroup/"> Product Group</a> <br />
+	<a href="/mm/quantity/"> Quantity </a> <br />
+	<a href="/mm/uc/"> Unit Conversion</a> <br />
+	<a href="/mm/rgroup/"> Raw Material Group</a> <br />
+	<a href="/mm/mtype/"> Movement Type</a> <br />
+
+	<a href="/sd/customer/"> Customer</a> <br />
+	</div>
+	{% endautoescape %}
+
+{% endblock %}

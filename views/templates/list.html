@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+	{% autoescape off %}
+
+	<div class="mainbody contain clearfix">
+
+	<!--     -->
+		<table width="100%">
+			<tr>
+				<td>{% if create_url %}<a onclick="javascript:newObject('{{ create_url }}');">Click for New</a>{% endif %}</td>
+				<td align="right">
+					{% if allow_search %}
+					<form method='GET' action='.' enctype="multipart/form-data">Search : <input type='text' name='search' /><input type='submit' value='Search' /></form>
+					{% endif %}
+				</td>
+			</tr>
+		</table>
+	<!--     -->
+
+		<hr />
+
+	<!-- header starts -->
+		{% if header %}
+		<h2> {{ header }} </h2>
+		{% endif %}
+	<!-- header ends -->
+
+		
+		<div class="popupform" id="newObject">
+			<a onclick="javascript:$('#newObject').hide();"><img src='/site_media/images/cancel.gif' alt="close" id="close" /></a>
+			<form action='' method='POST'>
+			<div id="newObjectContent"></div>
+			<p><a onclick="this.disabled=true,submitnewform($('#newObject').children('form').attr('action'), 'newObject');" >Submit</a></p>
+			</form>
+		</div>
+		<div class="popupform" id="editObject">
+			<a onclick="javascript:$('#editObject').hide();"><img src='/site_media/images/cancel.gif' alt="close" id="close" /></a>
+			<form action='' method='POST'>
+			<div id="editObjectContent"></div>
+			<p><a onclick="this.disabled=true,submiteditform($('#editObject').children('form').attr('action'), 'editObject');" >Submit</a></p>
+			</form>
+		</div>
+		<div class="popupform" id="viewObject">
+			<a onclick="javascript:$('#viewObject').hide();"><img src='/site_media/images/cancel.gif' alt="close" id="close" /></a>
+			<div id="viewObjectContent"></div>
+		</div>
+		<div class="popupform" id="addDependentObject">
+			<a onclick="javascript:$('#addDependentObject').hide();"><img src='/site_media/images/cancel.gif' alt="close" id="close" /></a>
+			<form action='' method='POST'>
+			<div id="addDependentObjectContent"></div>
+			<p><a onclick="this.disabled=true,submitadddependentform($('#addDependentObject').children('form').attr('action'), 'addDependentObject');" >Submit</a></p>
+			</form>
+		</div>
+		
+	<!-- table of results starts -->
+		{% if results %}
+		<table id="sort_table" class="tablesorter">
+
+		<!-- table headers -->
+			<thead><tr>
+				{{ results.0.as_table_header }}
+				<th class="{sorter: false}">Links</th>
+			</tr></thead>
+		<!-- table header end -->
+
+		<!-- table body -->
+			<tbody>
+			{% for result in results %}
+			<tr id='result{{ result.id }}'>
+				{{ result.as_table }}
+				<td>
+					{% include link_template %}
+				</td>
+			</tr>
+			{% endfor %}
+			</tbody>
+		<!-- table body ends -->
+		</table>
+
+		<center>
+		{% load tags %} 
+		{% if prev %}
+			<a href="?{% args getVars 'pageno' prev %}">prev</a> |
+		{% endif %}
+		{% if next %}
+			|<a href="?{% args getVars 'pageno' next %}">next</a>
+		{% endif %}
+		</center>
+
+		{% endif %}
+
+	<!-- table of results ends -->
+
+	</div>
+	{% endautoescape %}
+
+{% endblock %}

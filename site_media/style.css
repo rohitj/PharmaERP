@@ -1,0 +1,295 @@
+body, form, div, td {
+	font-family: "Helvetica", "DejaVu Sans Condensed", Calibri, "Lucida Sans Unicode", "Gill Sans Light", "Sans serif", "Arial";
+	font-size:10pt;
+	margin: 0;
+	padding: 0;
+	line-height: 1.5;
+	/* include td to keep IE5.5 Win happy */
+}
+
+h1 {
+	font-size: 15pt;
+}
+
+h2 {
+	font-size:13pt;
+}
+
+h3 {
+	font-size: 12pt;
+	letter-spacing: 0.2em;
+	margin-top: 0;
+}
+
+a {
+	color: black;
+}
+
+
+input, select, textarea {
+	border: 1px solid #000;
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+}
+
+body {
+}
+
+table.amounttable {
+  border-collapse:collapse;
+}
+
+table.form {
+	padding: 0px 10px 0px 0px;
+	border-left: 3px solid black;
+}
+
+.form th {
+	border-left: 3px solid #fc0;
+}
+
+.selection li {
+	border:2px solid #000;
+	margin: 5px 5px 5px 5px;
+	padding: 5px 5px 5px 5px;
+	display: inline;
+	background-color: #697171;
+}
+
+.selection a {
+	color: #fff;
+}
+
+.tablesorter a {
+	text-decoration: none;
+}
+
+table.menu{
+	width:100%;
+}
+
+.menu td {
+	padding: 10px 10px 10px 10px;
+}
+
+a.delete {
+	text-decoration: none;
+	margin: 10px 10px 10px 10px;
+	padding: 0px 50px;
+	border: 2px solid #fc0;
+
+}
+
+ul.notice {
+	border: 2px solid red;
+	background-color: #fff;
+	margin: 10px 30px 0px 30px;
+	list-style-type:circle;
+}
+
+.notice li {
+	display: block;
+	font-size: 14px;
+	color: #000;
+}
+
+ul.errorlist {
+	margin: 0;
+	padding: 0;
+	float: right;
+}
+
+.errorlist li {
+	background-color: #fc0;
+	display: block;
+	font-size: 10px;
+	margin: 0 0 3px;
+	padding: 4px 5px;
+}
+
+ul.calendar {
+	margin: 0;
+	padding: 0;
+}
+
+.calendar a {
+	text-decoration:none;
+	color: black;
+}
+.calendar li {
+	text-align:center;
+	margin: 0px 30px 0px 30px;
+	padding: 5px 50px;
+	font-size: 12px;
+	display: block;
+	border: 1px dashed black;
+}
+
+td.lateevent {
+	background-color: #FF5600;
+	border: 5px dashed red;
+}
+
+td.dueevent {
+	background-color: #000000;
+}
+
+
+.mybody {
+	background:grey;
+	width:950px;
+}
+
+.mybody img {
+	border:0;
+}
+
+.report {
+	width:600px;
+}
+
+.receipt {
+	width:600px;
+	font-size: 12px;
+}
+
+.receipt table {
+  border-collapse:collapse;
+}
+
+.contain {
+	text-align: left;
+	padding: 20px 30px 20px 30px;
+	margin: 0 auto;
+	clear: both;
+	border: 2px solid #CDCDCD;
+} 
+
+.navigation_backup {
+	width:940px;
+}
+
+
+hr {
+	border: 0;
+	height:2px;
+	color: #000;
+	background-color: #000;
+}
+
+.mainbody {
+	border: 2px solid #CDCDCD;
+	margin-top:10px;
+	background-color:#fff;
+	text-align:left;
+}
+
+.login {
+	border: 1px solid #fc0;
+	padding:5px 30px 5px 30px;
+}
+
+.centerpane {
+	display:inline;
+}
+
+.rightpane {
+	float:right;
+	display:inline;
+	width:200px;
+}
+.rightfeedpane {
+	float:right;
+	display:inline;
+	margin-top:26px;
+	width:230px;
+}
+.leftpane {
+	width:500px;
+	float:left;
+	display:inline;
+	text-align:left;
+}
+
+.leftfeedpane {
+	width:650px;
+	float:left;
+	display:inline;
+	text-align:left;
+}
+
+.loginpane {
+}
+
+#header {
+	font-size: 11pt;
+	background-color: #000;
+	padding: 2px 30px 2px 30px;
+	line-height: 1.5;
+	border-bottom: 3px solid #CDCDCD;
+	text-decoration: none;
+	color: #fff;
+}
+
+#header a {
+	text-decoration: none;
+	color: #fff;
+}
+#header a:hover {
+	text-decoration: underline;
+}
+
+#bottom {
+	font-size: 11pt;
+	background-color: #000;
+	padding: 2px 30px 2px 30px;
+	line-height: 1.5;
+	border-top: 3px solid #CDCDCD;
+	text-decoration: none;
+	color: #fff;
+}
+
+#bottom a {
+	text-decoration: none;
+	color: #fff;
+}
+#bottom a:hover {
+	text-decoration: underline;
+}
+
+.popupform {
+	position: absolute; 
+	z-index:1000; 
+	border: 2px solid #CDCDCD;
+	display:none;
+	background-color:white;
+	top:200px;
+	left:200px;
+	padding:5px 20px;
+}
+
+.popupform tr.oddrow td {
+	background-color:#F0F0F6;
+}
+
+img#close {
+  float: right;
+}
+
+a:hover {
+	 text-decoration: underline;
+}
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+.clearfix {
+	display: inline;
+}
+/* Hides from IE-mac \*/
+.clearfix { display: block; }
+/* End hide from IE-mac */

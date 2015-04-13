@@ -1,0 +1,42 @@
+
+<!-- saved from url=(0030)http://rohitj.net/indexpf.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"></head><body>{% extends "base.html" %}
+
+{% block meta %}
+
+	{% autoescape off %}
+{% if meta %}
+{{ meta }}
+{% endif %}
+	{% endautoescape %}
+
+{% endblock %}
+{% block content %}
+	{% autoescape off %}
+
+<div class="mainbody contain clearfix">
+	{% if header %}
+	<h2> {{ header }} </h2>
+	{% endif %}
+	{% if form %}
+		{% if deleteinstance %}
+		<a class="delete" href="javascript:askdelete();">Delete this record</a><br><span id="delete"></span>
+		{% endif %}
+		<form action="http://rohitj.net/" method="POST" enctype="multipart/form-data">
+			
+				{{ form.as_table }}
+				{% if form2 %}
+				{{ form2.as_table }}
+				{% endif %}
+			<table class="form"></table>
+			<p><input type="submit" onclick="this.disabled=true,this.form.submit();" value="Submit"></p>
+		</form>
+	{% endif %}
+	{% if nonform %}
+		{{ nonform }}
+	{% endif %}
+</div>
+	{% endautoescape %}
+
+{% endblock %}
+</body></html>

@@ -1,0 +1,50 @@
+{% autoescape off %}
+	{% if form %}
+				{% csrf_token %}
+				<table width="600">
+					{% if form2 %}
+						{{ form2.as_table }}
+					{% endif %}
+					{{ form.as_table }}
+				</table>
+
+		
+				{% if formset %}
+					{% for f in formset.management_form %}
+						{{ f }}
+					{% endfor %}
+					<!-- hidden fields -->
+					{% for form in formset.forms %}
+						{% for field in form.hidden_fields %}
+							{{ field }}
+						{% endfor %}
+					{% endfor %}
+
+					{% for dict in formset.errors %}
+						{% for error in dict.values %}
+							{{ error }} <br />
+						{% endfor %}
+					{% endfor %}
+
+					<table class="multiform">
+						{% for form in formset.forms %}
+							{% if forloop.first %}
+								<tr>
+									{% for field in form.visible_fields %}
+										<th>{{ field.label_tag }}</th>
+									{% endfor %}
+								</tr>
+							{% endif %}
+							<tr {% if forloop.last %}class="last_form" {% endif %}>
+								{% for field in form.visible_fields %}
+									<td>{{ field }}</td>
+								{% endfor %}
+							</tr>
+						{% endfor %}
+					</table>
+
+					<p><input type="button" value="Add More" id="add_more" onclick="cloneMore('.last_form', '{{ form_set }}');">
+					</p>
+				{% endif %} <!-- if formset-->
+	{% endif %}
+{% endautoescape %}

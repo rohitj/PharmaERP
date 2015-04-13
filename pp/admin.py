@@ -1,8 +1,8 @@
 from django.contrib import admin
-from pf2.pp.models import *
-from pf2.es.models import *
-from pf2.mm.models import *
-from pf2.pp.forms import PoForm
+from pp.models import *
+from es.models import *
+from mm.models import *
+from pp.forms import PoForm
 import datetime
 from django.forms.models import BaseInlineFormSet
 
@@ -49,8 +49,6 @@ class MbatchAdmin(admin.ModelAdmin):
             kwargs['queryset']= Pgroup.objects.filter(rmarea_id=1)  #hard coded 1
         return super(MbatchAdmin,self).formfield_for_dbfield(dbfield,**kwargs)
 
-class ContactsAdmin(admin.ModelAdmin):
-    model=Contacts
 
 class PtransportAdmin(admin.ModelAdmin):
     model=Ptransport
@@ -133,5 +131,4 @@ admin.site.register(Mbatch,MbatchAdmin)
 admin.site.register(Rmrecipemaster,RmrecipemasterAdmin)
 admin.site.register(Ptransport,PtransportAdmin)
 admin.site.register(Pordermaster,PordermasterAdmin)
-admin.site.register(Contacts,ContactsAdmin)
 admin.site.register(Rcodeas,RcodeasAdmin)
