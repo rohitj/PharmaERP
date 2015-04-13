@@ -463,7 +463,7 @@ class Rbatch(models.Model):
 class Rsr(models.Model):
     fstype=models.ForeignKey("pp.Fstype",null=True,blank=True)
     tab_tp=models.CharField(max_length=1,blank=True,null=True)
-    date=models.DateField(default=datetime.date.today())
+    date=models.DateField(default=datetime.date.today)
     rbatch=models.ForeignKey(Rbatch)
     mtype=models.ForeignKey(Mtype)   #movement type
     quantity=models.DecimalField(max_digits=12, decimal_places=4)

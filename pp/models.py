@@ -123,7 +123,7 @@ class Porder(models.Model):
     rate=models.DecimalField(max_digits=10, decimal_places=2,blank=True)
     actual=models.DecimalField(max_digits=10, default=0,decimal_places=2,blank=True)
     edd=models.DateField(verbose_name="Expected Date")
-    tdd=models.DateField(verbose_name="Target Date",default=datetime.date.today())  # target date of delivery
+    tdd=models.DateField(verbose_name="Target Date",default=datetime.date.today)  # target date of delivery
     STATUS_CHOICES=(("O","Open"),("H","Hold"),("C","Consolidate"),("R","Reject"))
     status=models.CharField(max_length=1,default="C",choices=STATUS_CHOICES)
 
