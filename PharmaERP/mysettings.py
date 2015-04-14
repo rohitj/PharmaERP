@@ -1,0 +1,3 @@
+DBNAME='pf'
+USERNAME='root'
+PASSWORD='1234'
