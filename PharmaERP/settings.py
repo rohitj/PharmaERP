@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from mysettings import *
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -66,9 +67,9 @@ WSGI_APPLICATION = 'PharmaERP.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pf',
-        'USER': 'root',
-        'PASSWORD': '1234',
+        'NAME': DBNAME,
+        'USER': USERNAME,
+        'PASSWORD': PASSWORD,
     }
 }
 
